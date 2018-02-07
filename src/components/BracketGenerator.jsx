@@ -1,34 +1,42 @@
-import React, { Component, PropTypes, PureComponent } from "react";
-import _ from "underscore";
-import Bracket from "./Bracket";
-import winningPathLength from "../util/winningPathLength";
-import GameShape from "./GameShape";
+import PropTypes from 'prop-types';
+import React, { Component, PureComponent } from 'react';
+import { any, chain, filter, map} from 'lodash';
+import Bracket from './Bracket';
+import winningPathLength from '../util/winningPathLength';
+import GameShape from './GameShape';
 
 const makeFinals = ({ games }) => {
   const isInGroup = (() => {
-    const gameIdHash = _.chain(games).indexBy('id').mapObject(val => 1).value();
+    const gameIdHash = chain(games).indexBy('id').mapObject(val => 1).value();
+
     return id => Boolean(gameIdHash[ id ]);
   })();
 
-  const gamesFeedInto = _.map(
+  const gamesFeedInto = map(
     games,
     game => ({
       ...game,
-      feedsInto: _.filter(
+      feedsInto: filter(
         games,
         ({ id, sides }) => (
           isInGroup(id) &&
-          _.any(
+          any(
             sides,
-            ({ seed }) => seed !== null && seed.sourceGame !== null && seed.rank === 1 && seed.sourceGame.id === game.id
+            ({ seed }) => (
+              seed !== null &&
+              seed.sourceGame !== null &&
+              seed.rank === 1 &&
+              seed.sourceGame.id === game.id
+            )
           )
         )
       )
     })
   );
 
-  return _.chain(gamesFeedInto)
-  // get the games that don't feed into anything else in the group, i.e. finals for this game group
+  return (
+    chain(gamesFeedInto)
+    // get the games that don't feed into anything else in the group, i.e. finals for this game group
     .filter(({ feedsInto }) => feedsInto.length === 0)
     .map(
       // get their heights
@@ -39,7 +47,8 @@ const makeFinals = ({ games }) => {
     )
     // render the tallest bracket first
     .sortBy(({ height }) => height * -1)
-    .value();
+    .value()
+  );
 };
 
 /**
@@ -47,7 +56,7 @@ const makeFinals = ({ games }) => {
  */
 class BracketTitle extends PureComponent {
   static propTypes = {
-    game: GameShape.isRequired,
+    game:   GameShape.isRequired,
     height: PropTypes.number.isRequired
   };
 
@@ -67,8 +76,7 @@ class BracketTitle extends PureComponent {
  */
 export default class BracketGenerator extends Component {
   static propTypes = {
-    games: PropTypes.arrayOf(GameShape).isRequired,
-
+    games:          PropTypes.arrayOf(GameShape).isRequired,
     titleComponent: PropTypes.func
   };
 
@@ -91,9 +99,17 @@ export default class BracketGenerator extends Component {
     const { finals } = this.state;
 
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', ...style }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...style
+        }}
+      >
         {
-          _.map(
+          map(
             finals,
             ({ game, height }) => (
               <div key={game.id} style={{ textAlign: 'center', flexGrow: 1, maxWidth: '100%' }}>

@@ -1,31 +1,41 @@
-var webpack = require('webpack');
-
 module.exports = {
-  entry: './src/index.jsx',
+  context: __dirname, // we just want to use $cwd
+  entry: {
+    'react-tournament-bracket': ['./src/index.jsx']
+  },
 
   output: {
-    path: './dist',
-    filename: 'react-tournament-bracket.js',
+    path: __dirname + './dist',
+    filename: '[name].js',
     library: 'ReactTournamentBracket',
     libraryTarget: 'umd'
   },
 
   externals: {
-    'react': { commonjs: 'react', commonjs2: 'react', amd: 'react', root: 'React' },
-    'underscore': { commonjs: 'underscore', commonjs2: 'underscore', amd: 'underscore', root: '_' }
+    'react': {
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'react',
+      root: 'React'
+    },
+    'lodash': {
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: 'lodash',
+      root: '_'
+    }
   },
 
   module: {
-    loaders: [
-      // interpret ES6
-      {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: 'babel'
+    loaders: [{
+      test: /\.jsx?$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      query: {
+        presets: ['es2015', 'stage-0'] // we need to use this preset so that Babel doesn't choke on JSX syntax
       }
-    ]
+    }]
   },
-
   resolve: {
     extensions: [ '', '.js', '.jsx' ]
   }

@@ -1,9 +1,12 @@
-import React, { PropTypes, PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { v4 } from 'uuid';
 
 export default class Clipped extends PureComponent {
   static propTypes = {
-    path: PropTypes.oneOfType([ PropTypes.node, PropTypes.arrayOf(PropTypes.node) ]).isRequired
+    path: PropTypes
+          .oneOfType([ PropTypes.node, PropTypes.arrayOf(PropTypes.node) ])
+          .isRequired
   };
 
   static defaultProps = {};
@@ -11,8 +14,8 @@ export default class Clipped extends PureComponent {
   _id = v4();
 
   render() {
-    const { _id } = this,
-      { path, children } = this.props;
+    const { _id } = this;
+    const { path, children } = this.props;
 
     return (
       <g>
@@ -32,19 +35,22 @@ export default class Clipped extends PureComponent {
 
 export class RectClipped extends PureComponent {
   static propTypes = {
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-    width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired
+    width:  PropTypes.number.isRequired,
+    x:      PropTypes.number.isRequired,
+    y:      PropTypes.number.isRequired,
   };
 
   static defaultProps = {};
 
   render() {
-    const { x, y, width, height, children } = this.props;
+    const { children, height, width, x, y } = this.props;
+    const path = (
+      <rect x={x} y={y} width={width} height={height}/>
+    );
 
     return (
-      <Clipped path={<rect x={x} y={y} width={width} height={height}/>}>
+      <Clipped path={path}>
         {children}
       </Clipped>
     );

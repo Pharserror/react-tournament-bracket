@@ -1,114 +1,135 @@
-import React, { PropTypes, PureComponent } from "react";
-import { RectClipped } from "./Clipped";
-import GameShape, { HOME, VISITOR } from "./GameShape";
-import controllable from "react-controllables";
-import moment from "moment";
-import _ from "underscore";
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { RectClipped } from './Clipped';
+import GameShape, { HOME, VISITOR } from './GameShape';
+import controllable from 'react-controllables';
+import moment from 'moment';
+import { compact } from 'lodash';
 
 class BracketGame extends PureComponent {
   static propTypes = {
-    game: GameShape.isRequired,
-
-    homeOnTop: PropTypes.bool,
-
-    hoveredTeamId: PropTypes.string,
+    bottomText:            PropTypes.func,
+    game:                  GameShape.isRequired,
+    homeOnTop:             PropTypes.bool,
+    hoveredTeamId:         PropTypes.string,
     onHoveredTeamIdChange: PropTypes.func.isRequired,
+    styles:                PropTypes.shape({
+      backgroundColor:        PropTypes.string.isRequired,
+      gameNameStyle:          PropTypes.object.isRequired,
+      hoverBackgroundColor:   PropTypes.string.isRequired,
+      scoreBackground:        PropTypes.string.isRequired,
+      teamNameStyle:          PropTypes.object.isRequired,
+      teamScoreStyle:         PropTypes.object.isRequired,
+      teamSeparatorStyle:     PropTypes.object.isRequired,
+      winningScoreBackground: PropTypes.string.isRequired
+    }),
 
-    styles: PropTypes.shape(
-      {
-        backgroundColor: PropTypes.string.isRequired,
-        hoverBackgroundColor: PropTypes.string.isRequired,
-        scoreBackground: PropTypes.string.isRequired,
-        winningScoreBackground: PropTypes.string.isRequired,
-        teamNameStyle: PropTypes.object.isRequired,
-        teamScoreStyle: PropTypes.object.isRequired,
-        gameNameStyle: PropTypes.object.isRequired,
-        teamSeparatorStyle: PropTypes.object.isRequired
-      }
-    ),
-
-    topText: PropTypes.func,
-    bottomText: PropTypes.func,
+    topText:               PropTypes.func
   };
 
   static defaultProps = {
-    homeOnTop: true,
+    homeOnTop:     true,
     hoveredTeamId: null,
-
-    styles: {
-      backgroundColor: '#58595e',
-      hoverBackgroundColor: '#222',
-
-      scoreBackground: '#787a80',
-      winningScoreBackground: '#ff7324',
-      teamNameStyle: { fill: '#fff', fontSize: 12, textShadow: '1px 1px 1px #222' },
-      teamScoreStyle: { fill: '#23252d', fontSize: 12 },
-      gameNameStyle: { fill: '#999', fontSize: 10 },
-      gameTimeStyle: { fill: '#999', fontSize: 10 },
-      teamSeparatorStyle: { stroke: '#444549', strokeWidth: 1 }
+    styles:        {
+      backgroundColor:        '#58595e',
+      bottomText:             ({ name, bracketLabel }) => _.compact([ name, bracketLabel ]).join(' - '),
+      gameNameStyle:          { fill: '#999', fontSize: 10 },
+      gameTimeStyle:          { fill: '#999', fontSize: 10 },
+      hoverBackgroundColor:   '#222',
+      scoreBackground:        '#787a80',
+      teamNameStyle:          { fill: '#fff', fontSize: 12, textShadow: '1px 1px 1px #222' },
+      teamScoreStyle:         { fill: '#23252d', fontSize: 12 },
+      teamSeparatorStyle:     { stroke: '#444549', strokeWidth: 1 },
+      winningScoreBackground: '#ff7324'
     },
 
-    topText: ({ scheduled }) => moment(scheduled).format('l LT'),
-    bottomText: ({ name, bracketLabel }) => _.compact([ name, bracketLabel ]).join(' - '),
+    topText:       ({ scheduled }) => moment(scheduled).format('l LT')
   };
 
   render() {
     const {
+      bottomText,
       game,
-
+      homeOnTop,
       hoveredTeamId,
       onHoveredTeamIdChange,
-
       styles: {
         backgroundColor,
-        hoverBackgroundColor,
-        scoreBackground,
-        winningScoreBackground,
-        teamNameStyle,
-        teamScoreStyle,
         gameNameStyle,
         gameTimeStyle,
-        teamSeparatorStyle
+        hoverBackgroundColor,
+        scoreBackground,
+        teamNameStyle,
+        teamScoreStyle,
+        teamSeparatorStyle,
+        winningScoreBackground
       },
 
-      homeOnTop,
-
-      topText, bottomText,
-
+      topText,
       ...rest
     } = this.props;
 
     const { sides } = game;
-
-    const top = sides[ homeOnTop ? HOME : VISITOR ],
-      bottom = sides[ homeOnTop ? VISITOR : HOME ];
-
-    const winnerBackground = (top && bottom && top.score && bottom.score && top.score.score !== bottom.score.score) ?
-      (
-        top.score.score > bottom.score.score ?
-          <rect x="170" y="12" width="30" height="22.5" style={{ fill: winningScoreBackground }} rx="3" ry="3"/> :
-          <rect x="170" y="34.5" width="30" height="22.5" style={{ fill: winningScoreBackground }} rx="3" ry="3"/>
-      ) :
-      null;
+    const bottom = sides[ homeOnTop ? VISITOR : HOME ];
+    const top = sides[ homeOnTop ? HOME : VISITOR ];
+    const winnerBackground = (
+      (top && bottom && top.score && bottom.score && top.score.score !== bottom.score.score)
+      ? (
+        top.score.score > bottom.score.score
+        ? (
+          <rect
+            height="22.5"
+            rx="3"
+            ry="3"
+            style={{ fill: winningScoreBackground }}
+            width="30"
+            x="170"
+            y="12"
+          />
+        ) : (
+          <rect
+            height="22.5"
+            rx="3"
+            ry="3"
+            style={{ fill: winningScoreBackground }}
+            width="30"
+            x="170"
+            y="34.5"
+          />
+        )
+      ) : null
+    );
 
     const Side = ({ x, y, side, onHover }) => {
-      const tooltip = side.seed && side.team ? <title>{side.seed.displayName}</title> : null;
+      const tooltip = (
+        side.seed && side.team
+        ? (
+          <title>{side.seed.displayName}</title>
+        ) : null
+      );
 
       return (
-        <g onMouseEnter={() => onHover(side && side.team ? side.team.id : null)} onMouseLeave={() => onHover(null)}>
+        <g
+          onMouseEnter={() => onHover(side && side.team ? side.team.id : null)}
+          onMouseLeave={() => onHover(null)}
+        >
           {/* trigger mouse events on the entire block */}
           <rect x={x} y={y} height={22.5} width={200} fillOpacity={0}>
             {tooltip}
           </rect>
-
           <RectClipped x={x} y={y} height={22.5} width={165}>
-            <text x={x + 5} y={y + 16}
-                  style={{ ...teamNameStyle, fontStyle: side.seed && side.seed.sourcePool ? 'italic' : null }}>
+            <text
+              style={{
+                ...teamNameStyle,
+                fontStyle: side.seed && side.seed.sourcePool ? 'italic' : null
+              }}
+              x={x + 5}
+              y={y + 16}
+            >
               {tooltip}
               {side.team ? side.team.name : (side.seed ? side.seed.displayName : null)}
             </text>
           </RectClipped>
-
           <text x={x + 185} y={y + 16} style={teamScoreStyle} textAnchor="middle">
             {side.score ? side.score.score : null}
           </text>
@@ -116,8 +137,8 @@ class BracketGame extends PureComponent {
       );
     };
 
-    const topHovered = (top && top.team && top.team.id === hoveredTeamId),
-      bottomHovered = (bottom && bottom.team && bottom.team.id === hoveredTeamId);
+    const topHovered = (top && top.team && top.team.id === hoveredTeamId);
+    const bottomHovered = (bottom && bottom.team && bottom.team.id === hoveredTeamId);
 
     return (
       <svg width="200" height="82" viewBox="0 0 200 82" {...rest}>
@@ -132,11 +153,25 @@ class BracketGame extends PureComponent {
         <rect x="0" y="12" width="200" height="45" fill={backgroundColor} rx="3" ry="3"/>
 
         {/* background for the top team */}
-        <rect x="0" y="12" width="200" height="22.5" fill={topHovered ? hoverBackgroundColor : backgroundColor} rx="3"
-              ry="3"/>
+        <rect
+          x="0"
+          y="12"
+          width="200"
+          height="22.5"
+          fill={topHovered ? hoverBackgroundColor : backgroundColor}
+          rx="3"
+          ry="3"
+        />
         {/* background for the bottom team */}
-        <rect x="0" y="34.5" width="200" height="22.5" fill={bottomHovered ? hoverBackgroundColor : backgroundColor}
-              rx="3" ry="3"/>
+        <rect
+          x="0"
+          y="34.5"
+          width="200"
+          height="22.5"
+          fill={bottomHovered ? hoverBackgroundColor : backgroundColor}
+          rx="3"
+          ry="3"
+        />
 
         {/* scores background */}
         <rect x="170" y="12" width="30" height="45" fill={scoreBackground} rx="3" ry="3"/>
