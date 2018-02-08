@@ -1,14 +1,37 @@
 import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
-import { any, chain, filter, map} from 'lodash';
+import { chain, filter, map, some } from 'lodash';
 import Bracket from './Bracket';
 import winningPathLength from '../util/winningPathLength';
 import GameShape from './GameShape';
 
+/* makeFinals()
+ *
+ *
+ */
 const makeFinals = ({ games }) => {
+  /* TODO: This is seriously convoluted. We should be able to grab the keys of
+   * the games and pass over the array with indexOf
+   * Unless I revisit this later and find a reason for this madness then it
+   * needs to be rewritten to be much simpler
+   */
   const isInGroup = (() => {
-    const gameIdHash = chain(games).indexBy('id').mapObject(val => 1).value();
+    const gameIdHash =
+      // cycle through all of the games
+      chain(games)
+      // create an object of all top level games with keys set to each game's id
+      .keyBy('id')
+      // Create a new object like { gameName1: 1, ... gameNameN: 1 }
+      .reduce((allGames, gameData, gameName) => {
+        allGames[gameName] = 1;
+        return allGames;
+      }, {})
+      // Return the created object
+      .value();
 
+      /* Finally we return a function that will tell us if a game with id is in
+       * the hash of games passed in
+       */
     return id => Boolean(gameIdHash[ id ]);
   })();
 
@@ -19,8 +42,12 @@ const makeFinals = ({ games }) => {
       feedsInto: filter(
         games,
         ({ id, sides }) => (
+          /* If the id of the game is in our top-level object or if it has a
+           * sides property (not the final game?) or its seed is the first game
+           * then it will be returned
+           */
           isInGroup(id) &&
-          any(
+          some(
             sides,
             ({ seed }) => (
               seed !== null &&
@@ -76,10 +103,12 @@ class BracketTitle extends PureComponent {
  */
 export default class BracketGenerator extends Component {
   static propTypes = {
+    // You must pass in an array of objects that adhere to the GameShape definition
     games:          PropTypes.arrayOf(GameShape).isRequired,
     titleComponent: PropTypes.func
   };
 
+  // By default we will render a BracketTitle to display the title for the whole bracket
   static defaultProps = {
     titleComponent: BracketTitle
   };

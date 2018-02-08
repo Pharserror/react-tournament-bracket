@@ -7,6 +7,7 @@ export default function winningPathLength(game, visited = {}) {
 
   visited[game.id] = true;
 
+  // Return the number of games we must traverse to get to the grand finals
   return (
     1 + (
       keys(game.sides).length > 0
@@ -16,7 +17,7 @@ export default function winningPathLength(game, visited = {}) {
           map(
             game.sides,
             ({ seed }) => (
-              (seed != null && seed.sourceGame != null && seed.rank === 1)
+              (!!seed && !!seed.sourceGame && seed.rank === 1)
               ? winningPathLength(seed.sourceGame, visited)
               : 0
             )
