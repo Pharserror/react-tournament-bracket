@@ -35,10 +35,10 @@ export default class Clipped extends PureComponent {
 
 export class RectClipped extends PureComponent {
   static propTypes = {
-    height: PropTypes.number.isRequired
+    height: PropTypes.number.isRequired,
     width:  PropTypes.number.isRequired,
     x:      PropTypes.number.isRequired,
-    y:      PropTypes.number.isRequired,
+    y:      PropTypes.number.isRequired
   };
 
   static defaultProps = {};
