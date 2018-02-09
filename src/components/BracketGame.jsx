@@ -4,7 +4,7 @@ import { RectClipped } from './Clipped';
 import GameShape, { HOME, VISITOR } from './GameShape';
 import controllable from 'react-controllables';
 import moment from 'moment';
-import { compact } from 'lodash';
+import { compact, isNumber } from 'lodash';
 
 class BracketGame extends PureComponent {
   static propTypes = {
@@ -32,7 +32,7 @@ class BracketGame extends PureComponent {
     hoveredTeamId: null,
     styles:        {
       backgroundColor:        '#58595e',
-      bottomText:             ({ name, bracketLabel }) => _.compact([ name, bracketLabel ]).join(' - '),
+      bottomText:             ({ name, bracketLabel }) => compact([ name, bracketLabel ]).join(' - '),
       gameNameStyle:          { fill: '#999', fontSize: 10 },
       gameTimeStyle:          { fill: '#999', fontSize: 10 },
       hoverBackgroundColor:   '#222',
@@ -73,7 +73,11 @@ class BracketGame extends PureComponent {
     const bottom = sides[ homeOnTop ? VISITOR : HOME ];
     const top = sides[ homeOnTop ? HOME : VISITOR ];
     const winnerBackground = (
-      (top && bottom && top.score && bottom.score && top.score.score !== bottom.score.score)
+      (!!top &&
+       !!bottom &&
+       isNumber(top.score) &&
+       isNumber(bottom.score) &&
+       top.score.score !== bottom.score.score)
       ? (
         top.score.score > bottom.score.score
         ? (
@@ -102,7 +106,7 @@ class BracketGame extends PureComponent {
 
     const Side = ({ x, y, side, onHover }) => {
       const tooltip = (
-        side.seed && side.team
+        !!side.seed && !!side.team
         ? (
           <title>{side.seed.displayName}</title>
         ) : null
@@ -110,7 +114,7 @@ class BracketGame extends PureComponent {
 
       return (
         <g
-          onMouseEnter={() => onHover(side && side.team ? side.team.id : null)}
+          onMouseEnter={() => onHover(!!side && !!side.team ? side.team.id : null)}
           onMouseLeave={() => onHover(null)}
         >
           {/* trigger mouse events on the entire block */}
@@ -121,24 +125,24 @@ class BracketGame extends PureComponent {
             <text
               style={{
                 ...teamNameStyle,
-                fontStyle: side.seed && side.seed.sourcePool ? 'italic' : null
+                fontStyle: !!side.seed && !!side.seed.sourcePool ? 'italic' : null
               }}
               x={x + 5}
               y={y + 16}
             >
               {tooltip}
-              {side.team ? side.team.name : (side.seed ? side.seed.displayName : null)}
+              {!!side.team ? side.team.name : (!!side.seed ? side.seed.displayName : null)}
             </text>
           </RectClipped>
           <text x={x + 185} y={y + 16} style={teamScoreStyle} textAnchor="middle">
-            {side.score ? side.score.score : null}
+            {isNumber(side.score) ? side.score.score : null}
           </text>
         </g>
       );
     };
 
-    const topHovered = (top && top.team && top.team.id === hoveredTeamId);
-    const bottomHovered = (bottom && bottom.team && bottom.team.id === hoveredTeamId);
+    const topHovered = (!!top && !!top.team && !!top.team.id === hoveredTeamId);
+    const bottomHovered = (!!bottom && !!bottom.team && bottom.team.id === hoveredTeamId);
 
     return (
       <svg width="200" height="82" viewBox="0 0 200 82" {...rest}>

@@ -50,8 +50,8 @@ const makeFinals = ({ games }) => {
           some(
             sides,
             ({ seed }) => (
-              seed !== null &&
-              seed.sourceGame !== null &&
+              !!seed &&
+              !!seed.sourceGame &&
               seed.rank === 1 &&
               seed.sourceGame.id === game.id
             )
@@ -98,9 +98,7 @@ class BracketTitle extends PureComponent {
   }
 }
 
-/**
- * Displays the brackets for some set of games sorted by bracket height
- */
+//Displays the brackets for some set of games sorted by bracket height
 export default class BracketGenerator extends Component {
   static propTypes = {
     // You must pass in an array of objects that adhere to the GameShape definition
@@ -117,12 +115,19 @@ export default class BracketGenerator extends Component {
     finals: makeFinals({ games: this.props.games })
   };
 
-  componentWillReceiveProps({ games }) {
+  componentWillReceiveProps({ games }) { // get games from nextProps
     if (games !== this.props.games) {
+      /* If we get a new set of games and they are not what we already have then
+       * we need to recalculate the path length and all that
+       */
       this.setState({ finals: makeFinals({ games }) });
     }
   }
 
+  /* Based on this render it should be safe to assume that the data is structured
+   * such that we have an array of games that are the grand finals and that all
+   * other games are nested in the game.sides.home/visitor properties
+   */
   render() {
     const { games, titleComponent: TitleComponent, style, ...rest } = this.props;
     const { finals } = this.state;
@@ -130,9 +135,9 @@ export default class BracketGenerator extends Component {
     return (
       <div
         style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
+          display:        'flex',
+          flexWrap:       'wrap',
+          alignItems:     'center',
           justifyContent: 'center',
           ...style
         }}
@@ -141,10 +146,19 @@ export default class BracketGenerator extends Component {
           map(
             finals,
             ({ game, height }) => (
-              <div key={game.id} style={{ textAlign: 'center', flexGrow: 1, maxWidth: '100%' }}>
-                <TitleComponent game={game} height={height}/>
-                <div style={{ maxWidth: '100%', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                  <Bracket game={game} {...rest}/>
+              <div
+                key={game.id}
+                style={{ flexGrow: 1, maxWidth: '100%', textAlign: 'center' }}
+              >
+                <TitleComponent game={game} height={height} />
+                <div
+                  style={{
+                    maxWidth:                '100%',
+                    overflow:                'auto',
+                    WebkitOverflowScrolling: 'touch'
+                  }}
+                >
+                  <Bracket game={game} {...rest} />
                 </div>
               </div>
             )

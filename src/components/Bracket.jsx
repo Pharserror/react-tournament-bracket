@@ -6,16 +6,16 @@ import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 
 const toBracketGames = ({
-  GameComponent,
+  ...rest,
   game,
-  x,
-  y,
+  GameComponent,
   gameDimensions,
-  roundSeparatorWidth,
-  round,
-  lineInfo,
   homeOnTop,
-  ...rest
+  lineInfo,
+  round,
+  roundSeparatorWidth,
+  x,
+  y
 }) => {
   const { width: gameWidth, height: gameHeight } = gameDimensions;
   const ySep = gameHeight * Math.pow(2, round - 2);
@@ -34,9 +34,15 @@ const toBracketGames = ({
     </g>
   ].concat(
     chain(game.sides)
+    /* Loop through the game sides, pass back an array of
+     * [{
+     *   ...sideObj,
+     *   side: 'home'/'visitor'
+     * }, ...]
+     */
     .map((obj, side) => ({ ...obj, side }))
-    // filter to the teams that come from winning other games
-    .filter(({ seed }) => seed && seed.sourceGame !== null && seed.rank === 1)
+    // Grab the games that have sourceGames with a rank of 1 (winning teams?)
+    .filter(({ seed }) => !!seed && !!seed.sourceGame && seed.rank === 1)
     .map(
       ({ seed: { sourceGame }, side }) => {
         // we put visitor teams on the bottom
@@ -96,6 +102,7 @@ export default class Bracket extends Component {
       separation:        PropTypes.number.isRequired,
       yOffset:           PropTypes.number.isRequired
     }).isRequired,
+
     svgPadding:          PropTypes.number.isRequired
   };
 
