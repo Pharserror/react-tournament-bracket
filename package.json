@@ -30,6 +30,10 @@
     "url": "https://github.com/Pharserror/react-tournament-bracket/issues"
   },
   "homepage": "https://github.com/Pharserror/react-tournament-bracket#readme",
+  "devDependencies": {
+    "express": "^4.14.0",
+    "webpack-dev-middleware": "1.6.1"
+  },
   "dependencies": {
     "babel-cli": "^6.23.0",
     "babel-core": "^6.26.0",
