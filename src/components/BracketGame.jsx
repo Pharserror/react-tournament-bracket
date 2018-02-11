@@ -7,45 +7,6 @@ import moment from 'moment';
 import { compact, isNumber } from 'lodash';
 
 class BracketGame extends PureComponent {
-  static propTypes = {
-    bottomText:            PropTypes.func,
-    game:                  GameShape.isRequired,
-    homeOnTop:             PropTypes.bool,
-    hoveredTeamId:         PropTypes.string,
-    onHoveredTeamIdChange: PropTypes.func.isRequired,
-    styles:                PropTypes.shape({
-      backgroundColor:        PropTypes.string.isRequired,
-      gameNameStyle:          PropTypes.object.isRequired,
-      hoverBackgroundColor:   PropTypes.string.isRequired,
-      scoreBackground:        PropTypes.string.isRequired,
-      teamNameStyle:          PropTypes.object.isRequired,
-      teamScoreStyle:         PropTypes.object.isRequired,
-      teamSeparatorStyle:     PropTypes.object.isRequired,
-      winningScoreBackground: PropTypes.string.isRequired
-    }),
-
-    topText:               PropTypes.func
-  };
-
-  static defaultProps = {
-    homeOnTop:     true,
-    hoveredTeamId: null,
-    styles:        {
-      backgroundColor:        '#58595e',
-      bottomText:             ({ name, bracketLabel }) => compact([ name, bracketLabel ]).join(' - '),
-      gameNameStyle:          { fill: '#999', fontSize: 10 },
-      gameTimeStyle:          { fill: '#999', fontSize: 10 },
-      hoverBackgroundColor:   '#222',
-      scoreBackground:        '#787a80',
-      teamNameStyle:          { fill: '#fff', fontSize: 12, textShadow: '1px 1px 1px #222' },
-      teamScoreStyle:         { fill: '#23252d', fontSize: 12 },
-      teamSeparatorStyle:     { stroke: '#444549', strokeWidth: 1 },
-      winningScoreBackground: '#ff7324'
-    },
-
-    topText:       ({ scheduled }) => moment(scheduled).format('l LT')
-  };
-
   render() {
     const {
       bottomText,
@@ -206,5 +167,44 @@ class BracketGame extends PureComponent {
     );
   }
 }
+
+BracketGame.propTypes = {
+  bottomText:            PropTypes.func,
+  game:                  GameShape.isRequired,
+  homeOnTop:             PropTypes.bool,
+  hoveredTeamId:         PropTypes.string,
+  onHoveredTeamIdChange: PropTypes.func.isRequired,
+  styles:                PropTypes.shape({
+    backgroundColor:        PropTypes.string.isRequired,
+    gameNameStyle:          PropTypes.object.isRequired,
+    hoverBackgroundColor:   PropTypes.string.isRequired,
+    scoreBackground:        PropTypes.string.isRequired,
+    teamNameStyle:          PropTypes.object.isRequired,
+    teamScoreStyle:         PropTypes.object.isRequired,
+    teamSeparatorStyle:     PropTypes.object.isRequired,
+    winningScoreBackground: PropTypes.string.isRequired
+  }),
+
+  topText:               PropTypes.func
+};
+
+BracketGame.defaultProps = {
+  bottomText:    ({ name, bracketLabel }) => compact([ name, bracketLabel ]).join(' - '),
+  homeOnTop:     true,
+  hoveredTeamId: null,
+  styles:        {
+    backgroundColor:        '#58595e',
+    gameNameStyle:          { fill: '#999', fontSize: 10 },
+    gameTimeStyle:          { fill: '#999', fontSize: 10 },
+    hoverBackgroundColor:   '#222',
+    scoreBackground:        '#787a80',
+    teamNameStyle:          { fill: '#fff', fontSize: 12, textShadow: '1px 1px 1px #222' },
+    teamScoreStyle:         { fill: '#23252d', fontSize: 12 },
+    teamSeparatorStyle:     { stroke: '#444549', strokeWidth: 1 },
+    winningScoreBackground: '#ff7324'
+  },
+
+  topText:       ({ scheduled }) => moment(scheduled).format('l LT')
+};
 
 export default controllable(BracketGame, [ 'hoveredTeamId' ]);

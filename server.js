@@ -15,7 +15,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 // We should make this file any compiled third party libraries
 // Tell Express where to find the assets we need
 app.get('/init.js', function(req, res) {
-  // Nothing special yet
+  res.sendFile(path.join(__dirname, './init.js'));
 });
 
 // We don't need to use the Express router because we want to render the SPA for
@@ -29,5 +29,5 @@ app.listen(9000, 'localhost', function(err) {
   if (err) {
     return console.error(err);
   }
-  console.log('Listening at http://0.0.0.9000');
+  console.log('Listening at http://0.0.0.0.9000');
 });

@@ -1,23 +1,35 @@
-var $ = require('jquery');
-var React = require('react');
-var ReactDOM = require('react-dom');
-var BracketGenerator = require('./src/components/BracketGenerator.jsx');
+import $ from 'jquery';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import BracketGenerator from './src/components/BracketGenerator.jsx';
 
 function generateSides(game, index, limit) {
   if (index <= limit) {
     return  {
-      home:    { seed: generateGame(game, index + 1, limit) },
-      visitor: { seed: generateGame(game, index + 1, limit) }
+      home:    {
+        seed: generateGame(game, index + 1, limit, {
+          displayName: `My Game ${index}`,
+          rank: index
+        })
+      },
+      visitor: {
+        seed: generateGame(game, index + 1, limit, {
+          displayName: `My Game ${index}`,
+          rank: index
+        })
+      }
     };
   } else {
     return undefined;
   }
 }
 
-function generateGame(game, index, limit) {
+function generateGame(game, index, limit, options = {}) {
   if (index <= limit) {
     return {
+      ...options,
       id: `game-${index}`,
+      name: `My Game`,
       scheduled: (new Date()).getTime(),
       sides: generateSides(game, index + 1, limit),
       sourceGame: game
@@ -29,18 +41,20 @@ function generateGame(game, index, limit) {
 }
 
 function generateRandomGames() {
-  var max = 10;
-  var min = 1;
-  var seed = Math.floor(Math.random() * (max - min + 1)) + min;
-  var games = [generateGame(undefined, 0, seed)];
+  let max = 10;
+  let min = 1;
+  let seed = Math.floor(Math.random() * (max - min + 1)) + min;
+  let games = [generateGame(undefined, 0, seed)];
 
   //for (var i = 1; i <= seed; i++) {
   generateGame(games[0], min, seed);
   //}
+  return games;
 }
 
 $(document).ready(function() {
-  var games = generateRandomGames();
+  let games = generateRandomGames();
+
   ReactDOM.render(
     React.createElement(
       BracketGenerator,
