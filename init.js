@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { pick } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator.jsx';
@@ -39,8 +40,8 @@ function generateGame(game, index, limit, options = {}) {
       name: 'My Game',
       scheduled: (new Date()).getTime(),
       sides: generateSides(sourceGameProps, index + 1, limit),
-      //sourceGame: (!!game && !!game.id ? { id: game.id, name: 'My Game' } : undefined)
-      sourceGame: null //game // || this
+      sourceGame: (!!game ? pick(game, ['id', 'name', 'scheduled']) : null)
+      //sourceGame: null //game // || this
     };
   } else {
     return undefined;

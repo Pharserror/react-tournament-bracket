@@ -85,20 +85,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function generateSides(game, index, limit) {
 	  if (index <= limit) {
-	    var homeScore = Math.floor(Math.random() * 100) + min;
-	    var visitorScore = Math.floor(Math.random() * 100) + min;
+	    var homeScore = Math.floor(Math.random() * 100) + 1;
+	    var visitorScore = Math.floor(Math.random() * 100) + 1;
 
 	    return {
 	      home: {
-	        score: homeScore,
-	        seed: generateGame(game, index + 1, limit, {
+	        score: { score: homeScore },
+	        seed: generateGame(game, index, limit, {
 	          displayName: 'My Game ' + index,
 	          rank: index
 	        })
 	      },
 	      visitor: {
-	        score: visitorScore,
-	        seed: generateGame(game, index + 1, limit, {
+	        score: { score: visitorScore },
+	        seed: generateGame(game, index, limit, {
 	          displayName: 'My Game ' + index,
 	          rank: index
 	        })
@@ -113,12 +113,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
 	  if (index <= limit) {
+	    var sourceGameProps = { id: 'game-' + index, name: 'My Game' };
+
 	    return _extends({}, options, {
-	      id: 'game-' + index,
+	      id: sourceGameProps.id,
 	      name: 'My Game',
 	      scheduled: new Date().getTime(),
-	      sides: generateSides(game, index + 1, limit),
-	      sourceGame: game
+	      sides: generateSides(sourceGameProps, index + 1, limit),
+	      //sourceGame: (!!game && !!game.id ? { id: game.id, name: 'My Game' } : undefined)
+	      sourceGame: null //game // || this
 	    });
 	  } else {
 	    return undefined;
@@ -126,15 +129,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function generateRandomGames() {
+	  var homeScore = Math.floor(Math.random() * 100) + 1;
 	  var max = 10;
 	  var min = 1;
 	  var seed = Math.floor(Math.random() * (max - min + 1)) + min;
-	  var games = [generateGame(undefined, 0, seed)];
+	  var rootGame = generateGame(undefined, 0, 0);
+	  var rootHomeSide = generateGame(rootGame, min, seed, {
+	    displayName: 'My Game ' + min,
+	    rank: min
+	  });
 
-	  //for (var i = 1; i <= seed; i++) {
-	  generateGame(games[0], min, seed);
-	  //}
-	  return games;
+	  var rootVisitorSide = generateGame(rootGame, min, seed, {
+	    displayName: 'My Game ' + min,
+	    rank: min
+	  });
+
+	  var visitorScore = Math.floor(Math.random() * 100) + 1;
+
+	  rootGame.sides = {
+	    home: {
+	      score: { score: homeScore },
+	      seed: rootHomeSide
+	    },
+	    visitor: {
+	      score: { score: visitorScore },
+	      seed: rootVisitorSide
+	    }
+	  };
+
+	  debugger;
+	  return [rootGame];
 	}
 
 	(0, _jquery2.default)(document).ready(function () {
@@ -32390,9 +32414,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _propTypes = __webpack_require__(187);
 
@@ -32438,65 +32462,73 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * Unless I revisit this later and find a reason for this madness then it
 	   * needs to be rewritten to be much simpler
 	   */
-	  var isInGroup = function () {
-	    var gameIdHash =
-	    // cycle through all of the games
+	  //const isInGroup = (() => {
+	  //  const gameIdHash =
+	  //    // cycle through all of the games
+	  //    chain(games)
+	  //    // create an object of all top level games with keys set to each game's id
+	  //    .keyBy('id')
+	  //    // Create a new object like { gameName1: 1, ... gameNameN: 1 }
+	  //    .reduce((allGames, gameData, gameName) => {
+	  //      allGames[gameName] = 1;
+	  //      return allGames;
+	  //    }, {})
+	  //    // Return the created object
+	  //    .value();
+
+	  //    /* Finally we return a function that will tell us if a game with id is in
+	  //     * the hash of games passed in
+	  //     */
+	  //  return id => Boolean(gameIdHash[ id ]);
+	  //})();
+
+	  //const gamesFeedInto = map(
+	  //  games,
+	  //  game => ({
+	  //    ...game,
+	  //    feedsInto: filter(
+	  //      games,
+	  //      ({ id, sides }) => (
+	  //        /* If the id of the game is in our top-level object or if it has a
+	  //         * sides property (not the final game?) or its seed is the first game
+	  //         * then it will be returned
+	  //         */
+	  //        isInGroup(id) &&
+	  //        some(
+	  //          sides,
+	  //          ({ seed }) => (
+	  //            !!seed &&
+	  //            !!seed.sourceGame &&
+	  //            seed.rank === 1 &&
+	  //            seed.sourceGame.id === game.id
+	  //          )
+	  //        )
+	  //      )
+	  //    )
+	  //  })
+	  //);
+
+	  //debugger;
+
+	  return (
+	    //chain(gamesFeedInto)
 	    (0, _lodash.chain)(games)
-	    // create an object of all top level games with keys set to each game's id
-	    .keyBy('id')
-	    // Create a new object like { gameName1: 1, ... gameNameN: 1 }
-	    .reduce(function (allGames, gameData, gameName) {
-	      allGames[gameName] = 1;
-	      return allGames;
-	    }, {})
-	    // Return the created object
-	    .value();
-
-	    /* Finally we return a function that will tell us if a game with id is in
-	     * the hash of games passed in
-	     */
-	    return function (id) {
-	      return Boolean(gameIdHash[id]);
-	    };
-	  }();
-
-	  var gamesFeedInto = (0, _lodash.map)(games, function (game) {
-	    return _extends({}, game, {
-	      feedsInto: (0, _lodash.filter)(games, function (_ref2) {
-	        var id = _ref2.id,
-	            sides = _ref2.sides;
-	        return (
-	          /* If the id of the game is in our top-level object or if it has a
-	           * sides property (not the final game?) or its seed is the first game
-	           * then it will be returned
-	           */
-	          isInGroup(id) && (0, _lodash.some)(sides, function (_ref3) {
-	            var seed = _ref3.seed;
-	            return !!seed && !!seed.sourceGame && seed.rank === 1 && seed.sourceGame.id === game.id;
-	          })
-	        );
-	      })
-	    });
-	  });
-
-	  return (0, _lodash.chain)(gamesFeedInto)
-	  // get the games that don't feed into anything else in the group, i.e. finals for this game group
-	  .filter(function (_ref4) {
-	    var feedsInto = _ref4.feedsInto;
-	    return feedsInto.length === 0;
-	  }).map(
-	  // get their heights
-	  function (game) {
-	    return {
-	      game: game,
-	      height: (0, _winningPathLength2.default)(game)
-	    };
-	  })
-	  // render the tallest bracket first
-	  .sortBy(function (_ref5) {
-	    var height = _ref5.height;
-	    return height * -1;
-	  }).value();
+	    // get the games that don't feed into anything else in the group, i.e. finals for this game group
+	    //.filter(({ feedsInto }) => feedsInto.length === 0)
+	    .map(
+	    // get their heights
+	    function (game) {
+	      return {
+	        game: game,
+	        height: (0, _winningPathLength2.default)(game)
+	      };
+	    })
+	    // render the tallest bracket first
+	    .sortBy(function (_ref2) {
+	      var height = _ref2.height;
+	      return height * -1;
+	    }).value()
+	  );
 	};
 
 	/**
@@ -32548,7 +32580,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _inherits(BracketGenerator, _Component);
 
 	  function BracketGenerator() {
-	    var _ref6;
+	    var _ref3;
 
 	    var _temp, _this2, _ret;
 
@@ -32558,7 +32590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      args[_key] = arguments[_key];
 	    }
 
-	    return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref6 = BracketGenerator.__proto__ || Object.getPrototypeOf(BracketGenerator)).call.apply(_ref6, [this].concat(args))), _this2), _this2.state = {
+	    return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref3 = BracketGenerator.__proto__ || Object.getPrototypeOf(BracketGenerator)).call.apply(_ref3, [this].concat(args))), _this2), _this2.state = {
 	      finals: makeFinals({ games: _this2.props.games })
 	    }, _temp), _possibleConstructorReturn(_this2, _ret);
 	  }
@@ -32568,8 +32600,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _createClass(BracketGenerator, [{
 	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(_ref7) {
-	      var games = _ref7.games;
+	    value: function componentWillReceiveProps(_ref4) {
+	      var games = _ref4.games;
 	      // get games from nextProps
 	      if (games !== this.props.games) {
 	        /* If we get a new set of games and they are not what we already have then
@@ -32596,6 +32628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var finals = this.state.finals;
 
 
+	      debugger;
 	      return _react2.default.createElement(
 	        'div',
 	        {
@@ -32606,9 +32639,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            justifyContent: 'center'
 	          }, style)
 	        },
-	        (0, _lodash.map)(finals, function (_ref8) {
-	          var game = _ref8.game,
-	              height = _ref8.height;
+	        (0, _lodash.map)(finals, function (_ref5) {
+	          var game = _ref5.game,
+	              height = _ref5.height;
 	          return _react2.default.createElement(
 	            'div',
 	            {
@@ -49928,6 +49961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var ySep = gameHeight * Math.pow(2, round - 2);
 
+	  debugger;
 	  return [_react2.default.createElement(
 	    'g',
 	    { key: game.id + '-' + y },
@@ -50012,24 +50046,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        width: numRounds * (gameDimensions.width + roundSeparatorWidth) + svgPadding * 2
 	      };
 
+	      /*return (
+	        <svg {...svgDimensions}>
+	          <g>
+	            {
+	              toBracketGames({
+	                GameComponent,
+	                gameDimensions,
+	                roundSeparatorWidth,
+	                game,
+	                round: numRounds,
+	                // svgPadding away from the right
+	                x: svgDimensions.width - svgPadding - gameDimensions.width,
+	                // vertically centered first game
+	                y: (svgDimensions.height / 2) - gameDimensions.height / 2,
+	                ...rest
+	              })
+	            }
+	          </g>
+	        </svg>
+	      );*/
 	      return _react2.default.createElement(
-	        'svg',
-	        svgDimensions,
-	        _react2.default.createElement(
-	          'g',
-	          null,
-	          toBracketGames(_extends({
-	            GameComponent: GameComponent,
-	            gameDimensions: gameDimensions,
-	            roundSeparatorWidth: roundSeparatorWidth,
-	            game: game,
-	            round: numRounds,
-	            // svgPadding away from the right
-	            x: svgDimensions.width - svgPadding - gameDimensions.width,
-	            // vertically centered first game
-	            y: svgDimensions.height / 2 - gameDimensions.height / 2
-	          }, rest))
-	        )
+	        'h3',
+	        null,
+	        'HELLO'
 	      );
 	    }
 	  }]);
@@ -50148,7 +50188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // the unix timestamp of the game-will be transformed to a human-readable time using momentjs
 	  scheduled: _propTypes2.default.number.isRequired,
 	  // only two sides are supported-home and visitor
-	  sides: _propTypes2.default.shape((_PropTypes$shape = {}, _defineProperty(_PropTypes$shape, HOME, SideShape), _defineProperty(_PropTypes$shape, VISITOR, SideShape), _PropTypes$shape)).isRequired
+	  sides: _propTypes2.default.shape((_PropTypes$shape = {}, _defineProperty(_PropTypes$shape, HOME, SideShape), _defineProperty(_PropTypes$shape, VISITOR, SideShape), _PropTypes$shape))
 	});
 
 	exports.default = GameShape;
@@ -50265,7 +50305,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var bottom = sides[homeOnTop ? _GameShape.VISITOR : _GameShape.HOME];
 	      var top = sides[homeOnTop ? _GameShape.HOME : _GameShape.VISITOR];
-	      var winnerBackground = !!top && !!bottom && (0, _lodash.isNumber)(top.score) && (0, _lodash.isNumber)(bottom.score) && top.score.score !== bottom.score.score ? top.score.score > bottom.score.score ? _react2.default.createElement('rect', {
+	      var winnerBackground = !!top && !!bottom && !!top.score && !!bottom.score && (0, _lodash.isNumber)(top.score.score) && (0, _lodash.isNumber)(bottom.score.score) && top.score.score !== bottom.score.score ? top.score.score > bottom.score.score ? _react2.default.createElement('rect', {
 	        height: '22.5',
 	        rx: '3',
 	        ry: '3',
@@ -50329,7 +50369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _react2.default.createElement(
 	            'text',
 	            { x: x + 185, y: y + 16, style: teamScoreStyle, textAnchor: 'middle' },
-	            (0, _lodash.isNumber)(side.score) ? side.score.score : null
+	            !!side.score && (0, _lodash.isNumber)(side.score.score) ? side.score.score : null
 	          )
 	        );
 	      };

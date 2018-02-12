@@ -6,7 +6,6 @@ import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 
 const toBracketGames = ({
-  ...rest,
   game,
   GameComponent,
   gameDimensions,
@@ -15,7 +14,8 @@ const toBracketGames = ({
   round,
   roundSeparatorWidth,
   x,
-  y
+  y,
+  ...rest
 }) => {
   const { width: gameWidth, height: gameHeight } = gameDimensions;
   const ySep = gameHeight * Math.pow(2, round - 2);
@@ -65,7 +65,7 @@ const toBracketGames = ({
             fill="transparent"
             stroke="black"
           />
-        ].concat(
+        ]/*.concat(
           toBracketGames({
             GameComponent,
             game: sourceGame,
@@ -78,7 +78,7 @@ const toBracketGames = ({
             round: round - 1,
             ...rest
           })
-        );
+        );*/
       }
     ).flatten(true)
     .value()
@@ -141,7 +141,7 @@ export default class Bracket extends Component {
       width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2
     };
 
-    /*return (
+    return (
       <svg {...svgDimensions}>
         <g>
           {
@@ -160,7 +160,6 @@ export default class Bracket extends Component {
           }
         </g>
       </svg>
-    );*/
-    return <h3>HELLO</h3>;
+    );
   }
 }
