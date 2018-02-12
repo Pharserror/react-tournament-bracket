@@ -36,8 +36,10 @@ class BracketGame extends PureComponent {
     const winnerBackground = (
       (!!top &&
        !!bottom &&
-       isNumber(top.score) &&
-       isNumber(bottom.score) &&
+       !!top.score &&
+       !!bottom.score &&
+       isNumber(top.score.score) &&
+       isNumber(bottom.score.score) &&
        top.score.score !== bottom.score.score)
       ? (
         top.score.score > bottom.score.score
@@ -96,7 +98,7 @@ class BracketGame extends PureComponent {
             </text>
           </RectClipped>
           <text x={x + 185} y={y + 16} style={teamScoreStyle} textAnchor="middle">
-            {isNumber(side.score) ? side.score.score : null}
+            {!!side.score && isNumber(side.score.score) ? side.score.score : null}
           </text>
         </g>
       );

@@ -85,14 +85,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function generateSides(game, index, limit) {
 	  if (index <= limit) {
+	    var homeScore = Math.floor(Math.random() * 100) + min;
+	    var visitorScore = Math.floor(Math.random() * 100) + min;
+
 	    return {
 	      home: {
+	        score: homeScore,
 	        seed: generateGame(game, index + 1, limit, {
 	          displayName: 'My Game ' + index,
 	          rank: index
 	        })
 	      },
 	      visitor: {
+	        score: visitorScore,
 	        seed: generateGame(game, index + 1, limit, {
 	          displayName: 'My Game ' + index,
 	          rank: index
@@ -135,7 +140,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	(0, _jquery2.default)(document).ready(function () {
 	  var games = generateRandomGames();
 
-	  debugger;
 	  _reactDom2.default.render(_react2.default.createElement(_BracketGenerator2.default, { games: games }), document.getElementById('root'));
 	});
 

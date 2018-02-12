@@ -47,7 +47,7 @@ GameShape = PropTypes.shape({
   sides: PropTypes.shape({
     [HOME]: SideShape,
     [VISITOR]: SideShape
-  }).isRequired
+  })
 });
 
 export default GameShape;

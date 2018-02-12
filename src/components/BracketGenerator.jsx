@@ -15,56 +15,59 @@ const makeFinals = ({ games }) => {
    * Unless I revisit this later and find a reason for this madness then it
    * needs to be rewritten to be much simpler
    */
-  const isInGroup = (() => {
-    const gameIdHash =
-      // cycle through all of the games
-      chain(games)
-      // create an object of all top level games with keys set to each game's id
-      .keyBy('id')
-      // Create a new object like { gameName1: 1, ... gameNameN: 1 }
-      .reduce((allGames, gameData, gameName) => {
-        allGames[gameName] = 1;
-        return allGames;
-      }, {})
-      // Return the created object
-      .value();
+  //const isInGroup = (() => {
+  //  const gameIdHash =
+  //    // cycle through all of the games
+  //    chain(games)
+  //    // create an object of all top level games with keys set to each game's id
+  //    .keyBy('id')
+  //    // Create a new object like { gameName1: 1, ... gameNameN: 1 }
+  //    .reduce((allGames, gameData, gameName) => {
+  //      allGames[gameName] = 1;
+  //      return allGames;
+  //    }, {})
+  //    // Return the created object
+  //    .value();
 
-      /* Finally we return a function that will tell us if a game with id is in
-       * the hash of games passed in
-       */
-    return id => Boolean(gameIdHash[ id ]);
-  })();
+  //    /* Finally we return a function that will tell us if a game with id is in
+  //     * the hash of games passed in
+  //     */
+  //  return id => Boolean(gameIdHash[ id ]);
+  //})();
 
-  const gamesFeedInto = map(
-    games,
-    game => ({
-      ...game,
-      feedsInto: filter(
-        games,
-        ({ id, sides }) => (
-          /* If the id of the game is in our top-level object or if it has a
-           * sides property (not the final game?) or its seed is the first game
-           * then it will be returned
-           */
-          isInGroup(id) &&
-          some(
-            sides,
-            ({ seed }) => (
-              !!seed &&
-              !!seed.sourceGame &&
-              seed.rank === 1 &&
-              seed.sourceGame.id === game.id
-            )
-          )
-        )
-      )
-    })
-  );
+  //const gamesFeedInto = map(
+  //  games,
+  //  game => ({
+  //    ...game,
+  //    feedsInto: filter(
+  //      games,
+  //      ({ id, sides }) => (
+  //        /* If the id of the game is in our top-level object or if it has a
+  //         * sides property (not the final game?) or its seed is the first game
+  //         * then it will be returned
+  //         */
+  //        isInGroup(id) &&
+  //        some(
+  //          sides,
+  //          ({ seed }) => (
+  //            !!seed &&
+  //            !!seed.sourceGame &&
+  //            seed.rank === 1 &&
+  //            seed.sourceGame.id === game.id
+  //          )
+  //        )
+  //      )
+  //    )
+  //  })
+  //);
+
+  //debugger;
 
   return (
-    chain(gamesFeedInto)
+    //chain(gamesFeedInto)
+    chain(games)
     // get the games that don't feed into anything else in the group, i.e. finals for this game group
-    .filter(({ feedsInto }) => feedsInto.length === 0)
+    //.filter(({ feedsInto }) => feedsInto.length === 0)
     .map(
       // get their heights
       game => ({
@@ -132,6 +135,7 @@ export default class BracketGenerator extends Component {
     const { games, titleComponent: TitleComponent, style, ...rest } = this.props;
     const { finals } = this.state;
 
+    debugger;
     return (
       <div
         style={{

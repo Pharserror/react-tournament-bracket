@@ -20,6 +20,7 @@ const toBracketGames = ({
   const { width: gameWidth, height: gameHeight } = gameDimensions;
   const ySep = gameHeight * Math.pow(2, round - 2);
 
+  debugger;
   return [
     <g key={`${game.id}-${y}`}>
       <GameComponent
@@ -140,7 +141,7 @@ export default class Bracket extends Component {
       width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2
     };
 
-    return (
+    /*return (
       <svg {...svgDimensions}>
         <g>
           {
@@ -159,6 +160,7 @@ export default class Bracket extends Component {
           }
         </g>
       </svg>
-    );
+    );*/
+    return <h3>HELLO</h3>;
   }
 }
