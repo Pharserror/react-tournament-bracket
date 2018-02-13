@@ -5,7 +5,7 @@ import GameShape from './GameShape';
 import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 
-const renderBracketSVG = ({
+const toBracketGames = ({
   game,
   GameComponent,
   gameDimensions,
@@ -142,42 +142,24 @@ export default class Bracket extends Component {
     };
 
     return (
-      <div className="col">
-        <div className="row">
-          <div className="col-8">
-            <div className="row">
-              <div className="col">
-                <Bracket game={game.sides.home} />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <Bracket game={game.sides.visitor} />
-              </div>
-            </div>
-          </div>
-          <div className="col-4">
-            <svg {...svgDimensions}>
-              <g>
-                {
-                  renderBracketSVG({
-                    GameComponent,
-                    gameDimensions,
-                    roundSeparatorWidth,
-                    game,
-                    round: numRounds,
-                    // svgPadding away from the right
-                    x: svgDimensions.width - svgPadding - gameDimensions.width,
-                    // vertically centered first game
-                    y: (svgDimensions.height / 2) - gameDimensions.height / 2,
-                    ...rest
-                  })
-                }
-              </g>
-            </svg>
-          </div>
-        </div>
-      </div>
+      <svg {...svgDimensions}>
+        <g>
+          {
+            toBracketGames({
+              GameComponent,
+              gameDimensions,
+              roundSeparatorWidth,
+              game,
+              round: numRounds,
+              // svgPadding away from the right
+              x: svgDimensions.width - svgPadding - gameDimensions.width,
+              // vertically centered first game
+              y: (svgDimensions.height / 2) - gameDimensions.height / 2,
+              ...rest
+            })
+          }
+        </g>
+      </svg>
     );
   }
 }
