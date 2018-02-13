@@ -77,7 +77,6 @@ function generateRandomGames() {
     }
   };
 
-  debugger;
   return [rootGame];
 }
 

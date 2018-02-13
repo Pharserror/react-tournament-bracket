@@ -119,7 +119,6 @@ export default class BracketGenerator extends Component {
   };
 
   componentWillReceiveProps({ games }) { // get games from nextProps
-    debugger;
     if (games !== this.props.games) {
       /* If we get a new set of games and they are not what we already have then
        * we need to recalculate the path length and all that
@@ -136,7 +135,6 @@ export default class BracketGenerator extends Component {
     const { games, titleComponent: TitleComponent, style, ...rest } = this.props;
     const { finals } = this.state;
 
-    debugger;
     return (
       <div
         style={{

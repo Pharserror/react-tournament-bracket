@@ -17,15 +17,15 @@ const SideShape = PropTypes.shape({
   }),
 
   seed: PropTypes.shape({
-      displayName: PropTypes.string.isRequired,
-      rank:        PropTypes.number.isRequired,
-      sourceGame:  lazyFunction(() => GameShape),
-      sourcePool:  PropTypes.object
+    displayName: PropTypes.string.isRequired,
+    rank:        PropTypes.number.isRequired,
+    sourceGame:  lazyFunction(() => GameShape),
+    sourcePool:  PropTypes.object
   }),
 
   team: PropTypes.shape({
-      id:   ID_TYPE,
-      name: PropTypes.string.isRequired
+    id:   ID_TYPE,
+    name: PropTypes.string.isRequired
   })
 });
 

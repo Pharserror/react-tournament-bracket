@@ -20,7 +20,6 @@ const renderBracketSVG = ({
   const { width: gameWidth, height: gameHeight } = gameDimensions;
   const ySep = gameHeight * Math.pow(2, round - 2);
 
-  debugger;
   return [
     <g key={`${game.id}-${y}`}>
       <GameComponent
@@ -66,7 +65,7 @@ const renderBracketSVG = ({
             stroke="black"
           />
         ].concat(
-          toBracketGames({
+          renderBracketSVG({
             GameComponent,
             game: seed,// sourceGame,
             homeOnTop,
@@ -125,6 +124,24 @@ export default class Bracket extends Component {
     svgPadding:          20
   };
 
+  getGameSidesComponents = game => (
+    (!!game && !!game.sides)
+    ? (
+      <div className="col-8">
+        <div className="row">
+          <div className="col">
+            <Bracket game={game.sides.home.seed} />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col">
+            <Bracket game={game.sides.visitor.seed} />
+          </div>
+        </div>
+      </div>
+    ) : null
+  )
+
   render() {
     const {
       GameComponent,
@@ -141,21 +158,11 @@ export default class Bracket extends Component {
       width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2
     };
 
+    debugger;
     return (
       <div className="col">
         <div className="row">
-          <div className="col-8">
-            <div className="row">
-              <div className="col">
-                <Bracket game={game.sides.home} />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <Bracket game={game.sides.visitor} />
-              </div>
-            </div>
-          </div>
+          {this.getGameSidesComponents(game)}
           <div className="col-4">
             <svg {...svgDimensions}>
               <g>
