@@ -125,7 +125,10 @@ export default class Bracket extends Component {
   };
 
   getGameSidesComponents = game => (
-    (!!game && !!game.sides)
+    (!!game &&
+     !!game.sides &&
+     !!game.sides.home && !!game.sides.visitor &&
+     !!game.sides.home.seed && !!game.sides.visitor.seed)
     ? (
       <div className="col-8">
         <div className="row">
@@ -158,7 +161,6 @@ export default class Bracket extends Component {
       width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2
     };
 
-    debugger;
     return (
       <div className="col">
         <div className="row">
