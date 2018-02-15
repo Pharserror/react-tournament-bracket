@@ -4,6 +4,22 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator.jsx';
 
+function generateSeed(game, index, limit) {
+  return (
+    index === limit
+    ? {
+      displayName: `Bottom of ${index}`,
+      name:        'My Game',
+      rank:        index,
+      sourceGame:  null,
+    }
+    : generateGame(game, index, limit, {
+      displayName: `My Game ${index}`,
+      rank:        index
+    })
+  )
+}
+
 function generateSides(game, index, limit) {
   if (index <= limit) {
     let homeScore = Math.floor(Math.random() * 100) + 1;
@@ -12,17 +28,11 @@ function generateSides(game, index, limit) {
     return  {
       home:    {
         score: { score: homeScore },
-        seed: generateGame(game, index, limit, {
-          displayName: `My Game ${index}`,
-          rank: index
-        })
+        seed:  generateSeed(game, index, limit)
       },
       visitor: {
         score: { score: visitorScore },
-        seed: generateGame(game, index, limit, {
-          displayName: `My Game ${index}`,
-          rank: index
-        })
+        seed:  generateSeed(game, index, limit)
       }
     };
   } else {
