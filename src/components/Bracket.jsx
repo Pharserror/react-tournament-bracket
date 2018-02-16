@@ -64,7 +64,7 @@ const renderBracketSVG = ({
             fill="transparent"
             stroke="black"
           />
-        ].concat(
+        ]/*.concat(
           renderBracketSVG({
             GameComponent,
             game: seed,// sourceGame,
@@ -77,7 +77,7 @@ const renderBracketSVG = ({
             round: round - 1,
             ...rest
           })
-        );
+        )*/;
       }
     ).flatten(true)
     .value()
@@ -130,7 +130,7 @@ export default class Bracket extends Component {
      !!game.sides.home && !!game.sides.visitor &&
      !!game.sides.home.seed && !!game.sides.visitor.seed)
     ? (
-      <div className="col-8">
+      <div className="col-2">
         <div className="row">
           <div className="col">
             <BracketGame game={game.sides.home.seed} />
@@ -165,7 +165,7 @@ export default class Bracket extends Component {
       <div className="col">
         <div className="row">
           {this.getGameSidesComponents(game)}
-          <div className="col-4">
+          <div className="col-3">
             <svg {...svgDimensions}>
               <g>
                 {
