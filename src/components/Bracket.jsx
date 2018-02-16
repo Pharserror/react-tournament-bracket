@@ -133,12 +133,12 @@ export default class Bracket extends Component {
       <div className="col-8">
         <div className="row">
           <div className="col">
-            <Bracket game={game.sides.home.seed} />
+            <BracketGame game={game.sides.home.seed} />
           </div>
         </div>
         <div className="row">
           <div className="col">
-            <Bracket game={game.sides.visitor.seed} />
+            <BracketGame game={game.sides.visitor.seed} />
           </div>
         </div>
       </div>
