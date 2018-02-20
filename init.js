@@ -62,7 +62,7 @@ function generateRandomGames() {
   let homeScore = Math.floor(Math.random() * 100) + 1;
   let max = 10;
   let min = 1;
-  let seed = Math.floor(Math.random() * (max - min + 1)) + min;
+  window.seed = 4; //Math.floor(Math.random() * (max - min + 1)) + min;
   let rootGame = generateGame(undefined, 0, 0);
   let rootHomeSide = generateGame(rootGame, min, seed, {
     displayName: `My Game ${min}`,
@@ -93,10 +93,12 @@ function generateRandomGames() {
 $(document).ready(function() {
   let games = generateRandomGames();
 
+  console.log(games);
+
   ReactDOM.render(
     React.createElement(
       BracketGenerator,
-      { games: games }
+      { games, numGames: window.seed }
     ),
     document.getElementById('root')
   );

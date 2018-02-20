@@ -5,6 +5,26 @@ import GameShape from './GameShape';
 import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 
+const SETTINGS = {
+  SIDES: ['home', 'visitor']
+};
+
+// game has score and seed as props
+const renderBracketOrGame = game => (
+  (!!game &&
+   !!game.seed &&
+   !!game.seed.sides &&
+   !!game.seed.sides.home && !!game.seed.sides.visitor &&
+   !!game.seed.sides.home.seed && !!game.seed.sides.visitor.seed)
+  ? (
+    <Bracket game={game.seed} />
+  ) : (
+    <div className="col text-right">
+      <BracketGame game={game.seed} />
+    </div>
+  )
+);
+
 const renderBracketSVG = ({
   game,
   GameComponent,
@@ -125,22 +145,14 @@ export default class Bracket extends Component {
   };
 
   getGameSidesComponents = game => (
-    (!!game &&
-     !!game.sides &&
-     !!game.sides.home && !!game.sides.visitor &&
-     !!game.sides.home.seed && !!game.sides.visitor.seed)
+    !!game.sides
     ? (
-      <div className="col-2">
-        <div className="row">
-          <div className="col">
-            <BracketGame game={game.sides.home.seed} />
+      <div className="col col-9">
+        {SETTINGS.SIDES.map(side => (
+          <div className="row" key={`${game.name}-${side}`}>
+            {renderBracketOrGame(game.sides[side])}
           </div>
-        </div>
-        <div className="row">
-          <div className="col">
-            <BracketGame game={game.sides.visitor.seed} />
-          </div>
-        </div>
+        ))}
       </div>
     ) : null
   )
@@ -165,7 +177,7 @@ export default class Bracket extends Component {
       <div className="col">
         <div className="row">
           {this.getGameSidesComponents(game)}
-          <div className="col-3">
+          <div className="col col-3 text-right">
             <svg {...svgDimensions}>
               <g>
                 {
