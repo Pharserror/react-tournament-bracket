@@ -155,7 +155,7 @@ export default class BracketGenerator extends Component {
                   flexGrow: 1,
                   maxWidth: '100%',
                   textAlign: 'center',
-                  minWidth: `${this.props.numGames * 200}px`
+                  minWidth: `${this.props.numRounds * 200}px`
                 }}
               >
                 <TitleComponent game={game} height={height} />

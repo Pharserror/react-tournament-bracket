@@ -48,6 +48,7 @@ function generateGame(game, index, limit, options = {}) {
       ...options,
       id: sourceGameProps.id,
       name: 'My Game',
+      num: index,
       scheduled: (new Date()).getTime(),
       sides: generateSides(sourceGameProps, index + 1, limit),
       sourceGame: (!!game ? pick(game, ['id', 'name', 'scheduled']) : null)
@@ -62,7 +63,7 @@ function generateRandomGames() {
   let homeScore = Math.floor(Math.random() * 100) + 1;
   let max = 10;
   let min = 1;
-  window.seed = 4; //Math.floor(Math.random() * (max - min + 1)) + min;
+  let seed = 6; // 6 is the maximum number of rounds we should support; no tourney is going to have more than 32 setups for a single pool
   let rootGame = generateGame(undefined, 0, 0);
   let rootHomeSide = generateGame(rootGame, min, seed, {
     displayName: `My Game ${min}`,
@@ -98,7 +99,7 @@ $(document).ready(function() {
   ReactDOM.render(
     React.createElement(
       BracketGenerator,
-      { games, numGames: window.seed }
+      { games, numRounds: 6 }
     ),
     document.getElementById('root')
   );

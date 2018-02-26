@@ -61,8 +61,6 @@ const renderBracketSVG = ({
      * }, ...]
      */
     .map((obj, side) => ({ ...obj, side }))
-    // Grab the games that have sourceGames with a rank of 1 (winning teams?)
-    .filter(({ seed }) => !!seed && !!seed.sourceGame && seed.rank === 1)
     .map(
       ({ seed, side }) => {
         // we put visitor teams on the bottom
@@ -168,9 +166,38 @@ export default class Bracket extends Component {
     } = this.props;
 
     const numRounds = winningPathLength(game);
+
+    let marginTop;
+
+    /* TODO: Need to replace this with a binary function to get the series:
+     * (({ 1, 2, 4, 8, 16, 32, ... } - 1) * 4) / 4
+     * OR
+     *  ({ 1, 2, 4, 8, 16, 32, ... } - 1) + 0.25
+     *
+     * As of 02/26/2018 the maximum number of Round 1 games supported is: 
+     */
+    switch (game.num) {
+      case 0:
+        marginTop = (61 * 88.5) / 4;
+        break;
+      case 1:
+        marginTop = (29 * 88.5) / 4;
+        break;
+      case 2:
+        marginTop = (13 * 88.5) / 4;
+        break;
+      case 3:
+        marginTop = (5 * 88.5) / 4;
+        break;
+      case 4:
+        marginTop = (1 * 88.5) / 4;
+        break;
+    }
+
     const svgDimensions = {
       height: (gameDimensions.height * Math.pow(2, numRounds - 1)) + svgPadding * 2,
-      width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2
+      width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2,
+      style:  { marginTop }
     };
 
     return (

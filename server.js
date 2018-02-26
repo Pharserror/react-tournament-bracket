@@ -18,6 +18,14 @@ app.get('/init.js', function(req, res) {
   res.sendFile(path.join(__dirname, './init.js'));
 });
 
+app.get('/bootstrap.css', function(req, res) {
+  res.sendFile(path.join(__dirname, './node_modules/bootstrap/dist/css/bootstrap.css'));
+});
+
+app.get('/bootstrap.css.map', function(req, res) {
+  res.sendFile(path.join(__dirname, './node_modules/bootstrap/dist/css/bootstrap.css.map'));
+});
+
 // We don't need to use the Express router because we want to render the SPA for
 // every route and that SPA will use the React-Router
 app.get(/^\/(?!images).*/, function(req, res) {
