@@ -86,13 +86,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function generateSeed(game, index, limit) {
-	  return index === limit ? null /*{
-	                                displayName: `Bottom of ${index}`,
-	                                name:        'My Game',
-	                                rank:        index,
-	                                sourceGame:  null,
-	                                }*/
-	  : generateGame(game, index, limit, {
+	  return index === limit ? null : generateGame(game, index, limit, {
 	    displayName: 'My Game ' + index,
 	    rank: index
 	  });
@@ -127,6 +121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return _extends({}, options, {
 	      id: sourceGameProps.id,
 	      name: 'My Game',
+	      num: index,
 	      scheduled: new Date().getTime(),
 	      sides: generateSides(sourceGameProps, index + 1, limit),
 	      sourceGame: !!game ? (0, _lodash.pick)(game, ['id', 'name', 'scheduled']) : null
@@ -141,7 +136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var homeScore = Math.floor(Math.random() * 100) + 1;
 	  var max = 10;
 	  var min = 1;
-	  window.seed = 4; //Math.floor(Math.random() * (max - min + 1)) + min;
+	  var seed = 6; // 6 is the maximum number of rounds we should support; no tourney is going to have more than 32 setups for a single pool
 	  var rootGame = generateGame(undefined, 0, 0);
 	  var rootHomeSide = generateGame(rootGame, min, seed, {
 	    displayName: 'My Game ' + min,
@@ -174,7 +169,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  console.log(games);
 
-	  _reactDom2.default.render(_react2.default.createElement(_BracketGenerator2.default, { games: games, numGames: window.seed }), document.getElementById('root'));
+	  _reactDom2.default.render(_react2.default.createElement(_BracketGenerator2.default, { games: games, numRounds: 6 }), document.getElementById('root'));
 	});
 
 /***/ }),
@@ -49781,7 +49776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                flexGrow: 1,
 	                maxWidth: '100%',
 	                textAlign: 'center',
-	                minWidth: _this3.props.numGames * 200 + 'px'
+	                minWidth: _this3.props.numRounds * 200 + 'px'
 	              }
 	            },
 	            _react2.default.createElement(TitleComponent, { game: game, height: height }),
@@ -49969,12 +49964,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	var SETTINGS = {
-	  SIDES: ['home', 'visitor']
+	  SIDES: ['home', 'visitor'],
+	  STYLES: {
+	    GAME: {
+	      WIDTH: 264
+	    },
+	    ROUND_MARGINS: {
+	      LEFT: 82,
+	      TOP: 88.5
+	    }
+	  }
 	};
 
 	// game has score and seed as props
-	var renderBracketOrGame = function renderBracketOrGame(game) {
-	  return !!game && !!game.seed && !!game.seed.sides && !!game.seed.sides.home && !!game.seed.sides.visitor && !!game.seed.sides.home.seed && !!game.seed.sides.visitor.seed ? _react2.default.createElement(Bracket, { game: game.seed }) : _react2.default.createElement(
+	var renderBracketOrGame = function renderBracketOrGame(game, numRounds, props) {
+	  return !!game && !!game.seed && !!game.seed.sides && !!game.seed.sides.home && !!game.seed.sides.visitor && !!game.seed.sides.home.seed && !!game.seed.sides.visitor.seed ? _react2.default.createElement(Bracket, { game: game.seed, numRounds: numRounds }) : _react2.default.createElement(
 	    'div',
 	    { className: 'col text-right' },
 	    _react2.default.createElement(_BracketGame2.default, { game: game.seed })
@@ -50017,14 +50021,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  .map(function (obj, side) {
 	    return _extends({}, obj, { side: side });
-	  })
-	  // Grab the games that have sourceGames with a rank of 1 (winning teams?)
-	  .filter(function (_ref2) {
-	    var seed = _ref2.seed;
-	    return !!seed && !!seed.sourceGame && seed.rank === 1;
-	  }).map(function (_ref3) {
-	    var seed = _ref3.seed,
-	        side = _ref3.side;
+	  }).map(function (_ref2) {
+	    var seed = _ref2.seed,
+	        side = _ref2.side;
 
 	    // we put visitor teams on the bottom
 	    // TODO: move home into SETTINGS
@@ -50033,25 +50032,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var pathInfo = ['M' + (x - lineInfo.separation) + ' ' + (y + gameHeight / 2 + lineInfo.yOffset + multiplier * lineInfo.homeVisitorSpread), 'H' + (x - roundSeparatorWidth / 2), 'V' + (y + gameHeight / 2 + lineInfo.yOffset + ySep / 2 * multiplier), 'H' + (x - roundSeparatorWidth + lineInfo.separation)];
 
-	    return [_react2.default.createElement('path', {
+	    return _react2.default.createElement('path', {
 	      key: game.id + '-' + side + '-' + y + '-path',
 	      d: pathInfo.join(' '),
 	      fill: 'transparent',
 	      stroke: 'black'
-	    })] /*.concat(
-	         renderBracketSVG({
-	           GameComponent,
-	           game: seed,// sourceGame,
-	           homeOnTop,
-	           lineInfo,
-	           gameDimensions,
-	           roundSeparatorWidth,
-	           x: x - gameWidth - roundSeparatorWidth,
-	           y: y + ((ySep / 2) * multiplier),
-	           round: round - 1,
-	           ...rest
-	         })
-	        )*/;
+	    });
 	  }).flatten(true).value());
 	};
 
@@ -50063,7 +50049,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _inherits(Bracket, _Component);
 
 	  function Bracket() {
-	    var _ref4;
+	    var _ref3;
 
 	    var _temp, _this, _ret;
 
@@ -50073,7 +50059,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      args[_key] = arguments[_key];
 	    }
 
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref4 = Bracket.__proto__ || Object.getPrototypeOf(Bracket)).call.apply(_ref4, [this].concat(args))), _this), _this.getGameSidesComponents = function (game) {
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref3 = Bracket.__proto__ || Object.getPrototypeOf(Bracket)).call.apply(_ref3, [this].concat(args))), _this), _this.getGameSidesComponents = function (game) {
 	      return !!game.sides ? _react2.default.createElement(
 	        'div',
 	        { className: 'col col-9' },
@@ -50081,7 +50067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return _react2.default.createElement(
 	            'div',
 	            { className: 'row', key: game.name + '-' + side },
-	            renderBracketOrGame(game.sides[side])
+	            renderBracketOrGame(game.sides[side], _this.props.numRounds, _this.props)
 	          );
 	        })
 	      ) : null;
@@ -50100,9 +50086,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          rest = _objectWithoutProperties(_props, ['GameComponent', 'game', 'gameDimensions', 'svgPadding', 'roundSeparatorWidth']);
 
 	      var numRounds = (0, _winningPathLength2.default)(game);
+	      var marginTop = ((Math.pow(2, this.props.numRounds - (game.num + 2)) - 1) * 4 + 1) / 4 * SETTINGS.STYLES.ROUND_MARGINS.TOP;
+
 	      var svgDimensions = {
 	        height: gameDimensions.height * Math.pow(2, numRounds - 1) + svgPadding * 2,
-	        width: numRounds * (gameDimensions.width + roundSeparatorWidth) + svgPadding * 2
+	        width: numRounds * (gameDimensions.width + roundSeparatorWidth) + svgPadding * 2,
+	        style: { marginTop: marginTop }
 	      };
 
 	      return _react2.default.createElement(
@@ -50117,7 +50106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            { className: 'col col-3 text-right' },
 	            _react2.default.createElement(
 	              'svg',
-	              svgDimensions,
+	              _extends({}, svgDimensions, { className: 'round-' + game.num }),
 	              _react2.default.createElement(
 	                'g',
 	                null,

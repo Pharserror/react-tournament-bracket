@@ -6,18 +6,27 @@ import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 
 const SETTINGS = {
-  SIDES: ['home', 'visitor']
+  SIDES: ['home', 'visitor'],
+  STYLES: {
+    GAME: {
+      WIDTH: 264
+    },
+    ROUND_MARGINS: {
+      LEFT: 82,
+      TOP:  88.5
+    }
+  }
 };
 
 // game has score and seed as props
-const renderBracketOrGame = game => (
+const renderBracketOrGame = (game, numRounds, props) => (
   (!!game &&
    !!game.seed &&
    !!game.seed.sides &&
    !!game.seed.sides.home && !!game.seed.sides.visitor &&
    !!game.seed.sides.home.seed && !!game.seed.sides.visitor.seed)
   ? (
-    <Bracket game={game.seed} />
+    <Bracket game={game.seed} numRounds={numRounds} />
   ) : (
     <div className="col text-right">
       <BracketGame game={game.seed} />
@@ -75,27 +84,14 @@ const renderBracketSVG = ({
           `H${x - roundSeparatorWidth + lineInfo.separation}`
         ];
 
-        return [
+        return (
           <path
             key={`${game.id}-${side}-${y}-path`}
             d={pathInfo.join(' ')}
             fill="transparent"
             stroke="black"
           />
-        ]/*.concat(
-          renderBracketSVG({
-            GameComponent,
-            game: seed,// sourceGame,
-            homeOnTop,
-            lineInfo,
-            gameDimensions,
-            roundSeparatorWidth,
-            x: x - gameWidth - roundSeparatorWidth,
-            y: y + ((ySep / 2) * multiplier),
-            round: round - 1,
-            ...rest
-          })
-        )*/;
+        );
       }
     ).flatten(true)
     .value()
@@ -148,7 +144,7 @@ export default class Bracket extends Component {
       <div className="col col-9">
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
-            {renderBracketOrGame(game.sides[side])}
+            {renderBracketOrGame(game.sides[side], this.props.numRounds, this.props)}
           </div>
         ))}
       </div>
@@ -166,33 +162,9 @@ export default class Bracket extends Component {
     } = this.props;
 
     const numRounds = winningPathLength(game);
-
-    let marginTop;
-
-    /* TODO: Need to replace this with a binary function to get the series:
-     * (({ 1, 2, 4, 8, 16, 32, ... } - 1) * 4) / 4
-     * OR
-     *  ({ 1, 2, 4, 8, 16, 32, ... } - 1) + 0.25
-     *
-     * As of 02/26/2018 the maximum number of Round 1 games supported is: 
-     */
-    switch (game.num) {
-      case 0:
-        marginTop = (61 * 88.5) / 4;
-        break;
-      case 1:
-        marginTop = (29 * 88.5) / 4;
-        break;
-      case 2:
-        marginTop = (13 * 88.5) / 4;
-        break;
-      case 3:
-        marginTop = (5 * 88.5) / 4;
-        break;
-      case 4:
-        marginTop = (1 * 88.5) / 4;
-        break;
-    }
+    let marginTop = (
+      (((Math.pow(2, (this.props.numRounds - (game.num + 2))) - 1) * 4) + 1) / 4
+    ) * SETTINGS.STYLES.ROUND_MARGINS.TOP;
 
     const svgDimensions = {
       height: (gameDimensions.height * Math.pow(2, numRounds - 1)) + svgPadding * 2,
@@ -205,7 +177,7 @@ export default class Bracket extends Component {
         <div className="row">
           {this.getGameSidesComponents(game)}
           <div className="col col-3 text-right">
-            <svg {...svgDimensions}>
+            <svg {...svgDimensions} className={`round-${game.num}`}>
               <g>
                 {
                   renderBracketSVG({

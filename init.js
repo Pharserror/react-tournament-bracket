@@ -7,12 +7,7 @@ import BracketGenerator from './src/components/BracketGenerator.jsx';
 function generateSeed(game, index, limit) {
   return (
     index === limit
-    ? null /*{
-      displayName: `Bottom of ${index}`,
-      name:        'My Game',
-      rank:        index,
-      sourceGame:  null,
-    }*/
+    ? null
     : generateGame(game, index, limit, {
       displayName: `My Game ${index}`,
       rank:        index

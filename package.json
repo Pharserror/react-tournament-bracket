@@ -1,6 +1,6 @@
 {
   "name": "react-tournament-bracket",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React tournament bracket renderer",
   "main": "dist/react-tournament-bracket.js",
   "scripts": {
