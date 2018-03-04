@@ -22,12 +22,20 @@ function generateSides(game, index, limit) {
 
     return  {
       home:    {
+        id: `game-${index} home`,
+        name: `My Game ${index} home`,
+        num: index,
+        scheduled: (new Date()).getTime(),
         score: { score: homeScore },
-        seed:  generateSeed(game, index, limit)
+        seed:  generateSeed(game, index + 1, limit)
       },
       visitor: {
+        id: `game-${index} visitor`,
+        name: `My Game ${index} visitor`,
+        num: index,
+        scheduled: (new Date()).getTime(),
         score: { score: visitorScore },
-        seed:  generateSeed(game, index, limit)
+        seed:  generateSeed(game, index + 1, limit)
       }
     };
   } else {
@@ -41,13 +49,12 @@ function generateGame(game, index, limit, options = {}) {
 
     return {
       ...options,
-      id: sourceGameProps.id,
-      name: 'My Game',
+      id: `game-${index} home`,
+      name: `My Game ${index} home`,
       num: index,
       scheduled: (new Date()).getTime(),
-      sides: generateSides(sourceGameProps, index + 1, limit),
+      sides: generateSides(sourceGameProps, index, limit),
       sourceGame: (!!game ? pick(game, ['id', 'name', 'scheduled']) : null)
-      //sourceGame: null //game // || this
     };
   } else {
     return undefined;
@@ -74,10 +81,18 @@ function generateRandomGames() {
 
   rootGame.sides = {
     home:    {
+      id: `game-0 home`,
+      name: `My Game 0 home`,
+      num: 0,
+      scheduled: (new Date()).getTime(),
       score: { score: homeScore },
       seed:  rootHomeSide
     },
     visitor: {
+      id: `game-0 visitor`,
+      name: `My Game 0 visitor`,
+      num: 0,
+      scheduled: (new Date()).getTime(),
       score: { score: visitorScore },
       seed:  rootVisitorSide
     }

@@ -71,7 +71,7 @@ class BracketGame extends PureComponent {
       const tooltip = (
         !!side.seed && !!side.team
         ? (
-          <title>{side.seed.displayName}</title>
+          <title>{side.name}</title>
         ) : null
       );
 
@@ -94,7 +94,7 @@ class BracketGame extends PureComponent {
               y={y + 16}
             >
               {tooltip}
-              {!!side.team ? side.team.name : (!!side.seed ? side.seed.displayName : null)}
+              {!!side.team ? side.team.name : (!!side.name ? side.name : null)}
             </text>
           </RectClipped>
           <text x={x + 185} y={y + 16} style={teamScoreStyle} textAnchor="middle">
