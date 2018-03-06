@@ -10,6 +10,7 @@ function generateDefaultOptions(index, side) {
     name: `My Game ${index}${!!side ? ` ${side}`: ''}`,
     num: index,
     scheduled: (new Date()).getTime(),
+    team: { id: `${side}-${index}`, name: `${side}-${index}` }
   };
 }
 
@@ -83,13 +84,15 @@ function generateRandomGames() {
     home:    {
       ...generateDefaultOptions(0, 'home'),
       score: { score: homeScore },
-      seed:  rootHomeSide
+      seed:  rootHomeSide,
+      team: { id: 'home-0', name: 'home-0' }
     },
     visitor: {
       ...generateDefaultOptions(0, 'visitor'),
       scheduled: (new Date()).getTime(),
       score: { score: visitorScore },
-      seed:  rootVisitorSide
+      seed:  rootVisitorSide,
+      team: { id: 'visitor-0', name: 'visitor-0' }
     }
   };
 

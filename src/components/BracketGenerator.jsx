@@ -101,6 +101,15 @@ class BracketTitle extends PureComponent {
 
 //Displays the brackets for some set of games sorted by bracket height
 export default class BracketGenerator extends Component {
+  constructor(props) {
+    super(props);
+
+    this.onHoveredTeamIdChange = this.onHoveredTeamIdChange.bind(this);
+    this.state = {
+      finals:        makeFinals({ games: this.props.games }),
+      hoveredTeamId: null
+    };
+  }
   static propTypes = {
     // You must pass in an array of objects that adhere to the GameShape definition
     games:          PropTypes.arrayOf(GameShape).isRequired,
@@ -112,10 +121,6 @@ export default class BracketGenerator extends Component {
     titleComponent: BracketTitle
   };
 
-  state = {
-    finals: makeFinals({ games: this.props.games })
-  };
-
   componentWillReceiveProps({ games }) { // get games from nextProps
     if (games !== this.props.games) {
       /* If we get a new set of games and they are not what we already have then
@@ -123,6 +128,10 @@ export default class BracketGenerator extends Component {
        */
       this.setState({ finals: makeFinals({ games }) });
     }
+  }
+
+  onHoveredTeamIdChange(id) {
+    this.setState({ hoveredTeamId: id });
   }
 
   /* Based on this render it should be safe to assume that the data is structured
@@ -166,7 +175,11 @@ export default class BracketGenerator extends Component {
                 >
                   <div className="container">
                     <div className="row">
-                      <Bracket game={game} {...rest} />
+                      <Bracket
+                        game={game}
+                        onHoveredTeamIdChange={this.onHoveredTeamIdChange}
+                        {...rest}
+                      />
                     </div>
                   </div>
                 </div>
