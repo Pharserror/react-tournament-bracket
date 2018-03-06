@@ -4,6 +4,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator.jsx';
 
+function generateDefaultOptions(index, side) {
+  return {
+    id: `game-${index}`,
+    name: `My Game ${index}${!!side ? ` ${side}`: ''}`,
+    num: index,
+    scheduled: (new Date()).getTime(),
+  };
+}
+
 function generateSeed(game, index, limit) {
   return (
     index === limit
@@ -22,18 +31,12 @@ function generateSides(game, index, limit) {
 
     return  {
       home:    {
-        id: `game-${index} home`,
-        name: `My Game ${index} home`,
-        num: index,
-        scheduled: (new Date()).getTime(),
+        ...generateDefaultOptions(index, 'home'),
         score: { score: homeScore },
         seed:  generateSeed(game, index + 1, limit)
       },
       visitor: {
-        id: `game-${index} visitor`,
-        name: `My Game ${index} visitor`,
-        num: index,
-        scheduled: (new Date()).getTime(),
+        ...generateDefaultOptions(index, 'visitor'),
         score: { score: visitorScore },
         seed:  generateSeed(game, index + 1, limit)
       }
@@ -48,11 +51,8 @@ function generateGame(game, index, limit, options = {}) {
     let sourceGameProps = { id: `game-${index}`, name: 'My Game' };
 
     return {
+      ...generateDefaultOptions(index),
       ...options,
-      id: `game-${index} home`,
-      name: `My Game ${index} home`,
-      num: index,
-      scheduled: (new Date()).getTime(),
       sides: generateSides(sourceGameProps, index, limit),
       sourceGame: (!!game ? pick(game, ['id', 'name', 'scheduled']) : null)
     };
@@ -81,17 +81,12 @@ function generateRandomGames() {
 
   rootGame.sides = {
     home:    {
-      id: `game-0 home`,
-      name: `My Game 0 home`,
-      num: 0,
-      scheduled: (new Date()).getTime(),
+      ...generateDefaultOptions(0, 'home'),
       score: { score: homeScore },
       seed:  rootHomeSide
     },
     visitor: {
-      id: `game-0 visitor`,
-      name: `My Game 0 visitor`,
-      num: 0,
+      ...generateDefaultOptions(0, 'visitor'),
       scheduled: (new Date()).getTime(),
       score: { score: visitorScore },
       seed:  rootVisitorSide

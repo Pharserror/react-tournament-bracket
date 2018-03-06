@@ -1,12 +1,52 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { RectClipped } from './Clipped';
 import GameShape, { HOME, VISITOR } from './GameShape';
 import controllable from 'react-controllables';
 import moment from 'moment';
 import { compact, isNumber } from 'lodash';
+import SETTINGS from './settings';
+import Side from './Side';
 
 class BracketGame extends PureComponent {
+  getGameSides(props, sides) {
+    return [(
+      !!sides.top ? (
+        <Side
+          {...props}
+          side={sides.top}
+          x={0}
+          y={12}
+        />
+      ) : null
+    ), (
+      !!sides.bottom ? (
+        <Side
+          {...props}
+          side={sides.bottom}
+          x={0}
+          y={34.5}
+        />
+      ) : null
+    )];
+  }
+
+  getWinningBackground({ bottom, top }) {
+    return (!!top &&
+     !!bottom &&
+     !!top.score &&
+     !!bottom.score &&
+     isNumber(top.score.score) &&
+     isNumber(bottom.score.score) &&
+     top.score.score !== bottom.score.score)
+    ? (
+      <rect
+        {...SETTINGS.SVG.BACKGROUNDS.SCORE}
+        style={{ fill: this.props.styles.winningScoreBackground }}
+        y={top.score.score > bottom.score.score ? "12" : "34.5"}
+      />
+    ) : null
+  }
+
   render() {
     const {
       bottomText,
@@ -33,77 +73,6 @@ class BracketGame extends PureComponent {
     const { sides } = game;
     const bottom = sides[ homeOnTop ? VISITOR : HOME ];
     const top = sides[ homeOnTop ? HOME : VISITOR ];
-    const winnerBackground = (
-      (!!top &&
-       !!bottom &&
-       !!top.score &&
-       !!bottom.score &&
-       isNumber(top.score.score) &&
-       isNumber(bottom.score.score) &&
-       top.score.score !== bottom.score.score)
-      ? (
-        top.score.score > bottom.score.score
-        ? (
-          <rect
-            height="22.5"
-            rx="3"
-            ry="3"
-            style={{ fill: winningScoreBackground }}
-            width="30"
-            x="170"
-            y="12"
-          />
-        ) : (
-          <rect
-            height="22.5"
-            rx="3"
-            ry="3"
-            style={{ fill: winningScoreBackground }}
-            width="30"
-            x="170"
-            y="34.5"
-          />
-        )
-      ) : null
-    );
-
-    const Side = ({ x, y, side, onHover }) => {
-      const tooltip = (
-        !!side.seed && !!side.team
-        ? (
-          <title>{side.name}</title>
-        ) : null
-      );
-
-      return (
-        <g
-          onMouseEnter={() => onHover(!!side && !!side.team ? side.team.id : null)}
-          onMouseLeave={() => onHover(null)}
-        >
-          {/* trigger mouse events on the entire block */}
-          <rect x={x} y={y} height={22.5} width={200} fillOpacity={0}>
-            {tooltip}
-          </rect>
-          <RectClipped x={x} y={y} height={22.5} width={165}>
-            <text
-              style={{
-                ...teamNameStyle,
-                fontStyle: !!side.seed && !!side.seed.sourcePool ? 'italic' : null
-              }}
-              x={x + 5}
-              y={y + 16}
-            >
-              {tooltip}
-              {!!side.team ? side.team.name : (!!side.name ? side.name : null)}
-            </text>
-          </RectClipped>
-          <text x={x + 185} y={y + 16} style={teamScoreStyle} textAnchor="middle">
-            {!!side.score && isNumber(side.score.score) ? side.score.score : null}
-          </text>
-        </g>
-      );
-    };
-
     const topHovered = (!!top && !!top.team && !!top.team.id === hoveredTeamId);
     const bottomHovered = (!!bottom && !!bottom.team && bottom.team.id === hoveredTeamId);
 
@@ -144,19 +113,15 @@ class BracketGame extends PureComponent {
         <rect x="170" y="12" width="30" height="45" fill={scoreBackground} rx="3" ry="3"/>
 
         {/* winner background */}
-        { winnerBackground }
+        { this.getWinningBackground({ bottom, top }) }
 
         {/* the players */}
         {
-          top ? (
-            <Side x={0} y={12} side={top} onHover={onHoveredTeamIdChange}/>
-          ) : null
-        }
-
-        {
-          bottom ? (
-            <Side x={0} y={34.5} side={bottom} onHover={onHoveredTeamIdChange}/>
-          ) : null
+          this.getGameSides({
+            onHover: onHoveredTeamIdChange,
+            teamNameStyle,
+            teamScoreStyle
+          }, { bottom, top })
         }
 
         <line x1="0" y1="34.5" x2="200" y2="34.5" style={teamSeparatorStyle}/>
@@ -186,7 +151,6 @@ BracketGame.propTypes = {
     teamSeparatorStyle:     PropTypes.object.isRequired,
     winningScoreBackground: PropTypes.string.isRequired
   }),
-
   topText:               PropTypes.func
 };
 
@@ -205,7 +169,6 @@ BracketGame.defaultProps = {
     teamSeparatorStyle:     { stroke: '#444549', strokeWidth: 1 },
     winningScoreBackground: '#ff7324'
   },
-
   topText:       ({ scheduled }) => moment(scheduled).format('l LT')
 };
 

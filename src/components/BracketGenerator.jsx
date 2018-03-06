@@ -61,8 +61,6 @@ const makeFinals = ({ games }) => {
   //  })
   //);
 
-  //debugger;
-
   return (
     //chain(gamesFeedInto)
     chain(games)

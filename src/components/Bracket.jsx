@@ -4,32 +4,19 @@ import { chain } from 'lodash';
 import GameShape from './GameShape';
 import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
-
-const SETTINGS = {
-  SIDES: ['home', 'visitor'],
-  STYLES: {
-    GAME: {
-      WIDTH: 264
-    },
-    ROUND_MARGINS: {
-      LEFT: 82,
-      TOP:  88.5
-    }
-  }
-};
+import SETTINGS from './settings';
 
 // game has score and seed as props
-const renderBracketOrGame = (game, numRounds, props) => (
+const renderBracketOrGame = (game, numRounds, props, side) => (
   (!!game &&
-   !!game.seed &&
-   !!game.seed.sides &&
-   !!game.seed.sides.home && !!game.seed.sides.visitor &&
-   !!game.seed.sides.home.seed && !!game.seed.sides.visitor.seed)
+   !!game.sides &&
+   !!game.sides.home && !!game.sides.visitor &&
+   !!game.sides.home.seed && !!game.sides.visitor.seed)
   ? (
-    <Bracket game={game.seed} numRounds={numRounds} />
+    <Bracket game={game} numRounds={numRounds} />
   ) : (
     <div className="col text-right">
-      <BracketGame game={game.seed} />
+      <BracketGame game={game} />
     </div>
   )
 );
@@ -144,7 +131,7 @@ export default class Bracket extends Component {
       <div className="col col-9">
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
-            {renderBracketOrGame(game.sides[side], this.props.numRounds, this.props)}
+            {renderBracketOrGame(game.sides[side].seed, this.props.numRounds, this.props)}
           </div>
         ))}
       </div>
