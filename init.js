@@ -6,11 +6,11 @@ import BracketGenerator from './src/components/BracketGenerator.jsx';
 
 function generateDefaultOptions(index, side) {
   return {
-    id: `game-${index}`,
-    name: `My Game ${index}${!!side ? ` ${side}`: ''}`,
-    num: index,
+    id:        `game-${index}`,
+    name:      `My Game ${index}${!!side ? ` ${side}`: ''}`,
+    num:       index,
     scheduled: (new Date()).getTime(),
-    team: { id: `${side}-${index}`, name: `${side}-${index}` }
+    team:      { id: `${side}-0`, name: `${side}-0` }
   };
 }
 

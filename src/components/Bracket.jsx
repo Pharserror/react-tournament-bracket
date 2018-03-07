@@ -7,16 +7,16 @@ import BracketGame from './BracketGame';
 import SETTINGS from './settings';
 
 // game has score and seed as props
-const renderBracketOrGame = (game, numRounds, props, side) => (
+const renderBracketOrGame = (game, numRounds, props) => (
   (!!game &&
    !!game.sides &&
    !!game.sides.home && !!game.sides.visitor &&
    !!game.sides.home.seed && !!game.sides.visitor.seed)
   ? (
-    <Bracket game={game} numRounds={numRounds} />
+    <Bracket game={game} numRounds={numRounds} {...props} />
   ) : (
     <div className="col text-right">
-      <BracketGame game={game} />
+      <BracketGame game={game} {...props} />
     </div>
   )
 );
@@ -97,13 +97,11 @@ export default class Bracket extends Component {
       height: PropTypes.number.isRequired,
       width:  PropTypes.number.isRequired
     }).isRequired,
-
     lineInfo:            PropTypes.shape({
       homeVisitorSpread: PropTypes.number.isRequired,
       separation:        PropTypes.number.isRequired,
       yOffset:           PropTypes.number.isRequired
     }).isRequired,
-
     svgPadding:          PropTypes.number.isRequired
   };
 
@@ -114,13 +112,11 @@ export default class Bracket extends Component {
       height: 80,
       width: 200
     },
-
     lineInfo:            {
       yOffset: -6,
       separation: 6,
       homeVisitorSpread: 11
     },
-
     roundSeparatorWidth: 24,
     svgPadding:          20
   };
@@ -131,7 +127,16 @@ export default class Bracket extends Component {
       <div className="col col-9">
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
-            {renderBracketOrGame(game.sides[side].seed, this.props.numRounds, this.props)}
+            {
+              renderBracketOrGame(
+                game.sides[side].seed,
+                this.props.numRounds,
+                {
+                  hoveredTeamId:         this.props.hoveredTeamId,
+                  onHoveredTeamIdChange: this.props.onHoveredTeamIdChange
+                }
+              )
+            }
           </div>
         ))}
       </div>

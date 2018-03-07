@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    name: 'My Game ' + index + (!!side ? ' ' + side : ''),
 	    num: index,
 	    scheduled: new Date().getTime(),
-	    team: { id: side + '-' + index, name: side + '-' + index }
+	    team: { id: side + '-0', name: side + '-0' }
 	  };
 	}
 
@@ -49805,6 +49805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                  { className: 'row' },
 	                  _react2.default.createElement(_Bracket2.default, _extends({
 	                    game: game,
+	                    hoveredTeamId: _this3.state.hoveredTeamId,
 	                    onHoveredTeamIdChange: _this3.onHoveredTeamIdChange
 	                  }, rest))
 	                )
@@ -49979,11 +49980,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// game has score and seed as props
-	var renderBracketOrGame = function renderBracketOrGame(game, numRounds, props, side) {
-	  return !!game && !!game.sides && !!game.sides.home && !!game.sides.visitor && !!game.sides.home.seed && !!game.sides.visitor.seed ? _react2.default.createElement(Bracket, { game: game, numRounds: numRounds }) : _react2.default.createElement(
+	var renderBracketOrGame = function renderBracketOrGame(game, numRounds, props) {
+	  return !!game && !!game.sides && !!game.sides.home && !!game.sides.visitor && !!game.sides.home.seed && !!game.sides.visitor.seed ? _react2.default.createElement(Bracket, _extends({ game: game, numRounds: numRounds }, props)) : _react2.default.createElement(
 	    'div',
 	    { className: 'col text-right' },
-	    _react2.default.createElement(_BracketGame2.default, { game: game })
+	    _react2.default.createElement(_BracketGame2.default, _extends({ game: game }, props))
 	  );
 	};
 
@@ -50069,7 +50070,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return _react2.default.createElement(
 	            'div',
 	            { className: 'row', key: game.name + '-' + side },
-	            renderBracketOrGame(game.sides[side].seed, _this.props.numRounds, _this.props)
+	            renderBracketOrGame(game.sides[side].seed, _this.props.numRounds, {
+	              hoveredTeamId: _this.props.hoveredTeamId,
+	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange
+	            })
 	          );
 	        })
 	      ) : null;
@@ -50142,13 +50146,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    height: _propTypes2.default.number.isRequired,
 	    width: _propTypes2.default.number.isRequired
 	  }).isRequired,
-
 	  lineInfo: _propTypes2.default.shape({
 	    homeVisitorSpread: _propTypes2.default.number.isRequired,
 	    separation: _propTypes2.default.number.isRequired,
 	    yOffset: _propTypes2.default.number.isRequired
 	  }).isRequired,
-
 	  svgPadding: _propTypes2.default.number.isRequired
 	};
 	Bracket.defaultProps = {
@@ -50158,13 +50160,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    height: 80,
 	    width: 200
 	  },
-
 	  lineInfo: {
 	    yOffset: -6,
 	    separation: 6,
 	    homeVisitorSpread: 11
 	  },
-
 	  roundSeparatorWidth: 24,
 	  svgPadding: 20
 	};
