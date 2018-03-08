@@ -10,8 +10,8 @@ function generateDefaultOptions(index, roundLimit, side) {
     if (index < roundLimit) {
       let winnerMatchIndex = (
         side === 'home'
-        ? window.roundGameCounter[index] + 1
-        : window.roundGameCounter[index] + 2
+        ? window.roundGameCounter[index] + window.roundGameCounter[index]
+        : window.roundGameCounter[index] + window.roundGameCounter[index] + 1
       );
 
       name = `Winner of ${index + 1}-${winnerMatchIndex - 1}`;
@@ -21,7 +21,7 @@ function generateDefaultOptions(index, roundLimit, side) {
 
     return {
       id:        name,
-      name:      `My Game ${index}-${window.roundGameCounter[index]}${!!side ? ` ${side}`: ''}`,
+      name:      `My Game ${index}-${window.roundGameCounter[index] + 1}${!!side ? ` ${side}`: ''}`,
       num:       index,
       scheduled: (new Date()).getTime(),
       team:      {
@@ -92,7 +92,7 @@ function generateGame(game, index, numberOfRounds, roundLimit, options = {}) {
 }
 
 function generateRandomGames(options = {}) {
-  window.roundGameCounter = {};
+  window.roundGameCounter = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   const { roundLimit } = options;
   let homeScore = (
      roundLimit
