@@ -1,45 +1,71 @@
 import $ from 'jquery';
-import { pick } from 'lodash';
+import { isNumber, pick } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator.jsx';
 
-function generateDefaultOptions(index, side) {
-  return {
-    id:        `game-${index}`,
-    name:      `My Game ${index}${!!side ? ` ${side}`: ''}`,
-    num:       index,
-    scheduled: (new Date()).getTime(),
-    team:      { id: `${side}-0`, name: `${side}-0` }
-  };
+function generateDefaultOptions(index, roundLimit, side) {
+    let name;
+
+    if (index < roundLimit) {
+      let winnerMatchIndex = (
+        side === 'home'
+        ? window.roundGameCounter[index] + 1
+        : window.roundGameCounter[index] + 2
+      );
+
+      name = `Winner of ${index + 1}-${winnerMatchIndex - 1}`;
+    } else {
+      name = `${side}-${index}-${window.roundGameCounter[index]}`;
+    }
+
+    return {
+      id:        name,
+      name:      `My Game ${index}-${window.roundGameCounter[index]}${!!side ? ` ${side}`: ''}`,
+      num:       index,
+      scheduled: (new Date()).getTime(),
+      team:      {
+        id:   name,
+        name: name
+      }
+    };
+  //}
 }
 
-function generateSeed(game, index, limit) {
+function generateSeed(game, index, numberOfRounds, roundLimit) {
   return (
-    index === limit
+    index === numberOfRounds
     ? null
-    : generateGame(game, index, limit, {
-      displayName: `My Game ${index}`,
+    : generateGame(game, index, numberOfRounds, roundLimit, {
+      displayName: `My Game ${index}-${window.roundGameCounter[index]}`,
       rank:        index
     })
   )
 }
 
-function generateSides(game, index, limit) {
-  if (index <= limit) {
+function generateSides(game, index, numberOfRounds, roundLimit) {
+  if (index <= numberOfRounds) {
+    let counter;
     let homeScore = Math.floor(Math.random() * 100) + 1;
     let visitorScore = Math.floor(Math.random() * 100) + 1;
 
+    if (isNumber(window.roundGameCounter[index])) {
+      counter = ++window.roundGameCounter[index];
+    } else {
+      window.roundGameCounter[index] = 0;
+      counter = 0;
+    }
+
     return  {
       home:    {
-        ...generateDefaultOptions(index, 'home'),
+        ...generateDefaultOptions(index, roundLimit, 'home'),
         score: { score: homeScore },
-        seed:  generateSeed(game, index + 1, limit)
+        seed:  generateSeed(game, index + 1, numberOfRounds, roundLimit)
       },
       visitor: {
-        ...generateDefaultOptions(index, 'visitor'),
+        ...generateDefaultOptions(index, roundLimit, 'visitor'),
         score: { score: visitorScore },
-        seed:  generateSeed(game, index + 1, limit)
+        seed:  generateSeed(game, index + 1, numberOfRounds, roundLimit)
       }
     };
   } else {
@@ -47,14 +73,17 @@ function generateSides(game, index, limit) {
   }
 }
 
-function generateGame(game, index, limit, options = {}) {
-  if (index <= limit) {
-    let sourceGameProps = { id: `game-${index}`, name: 'My Game' };
+function generateGame(game, index, numberOfRounds, roundLimit, options = {}) {
+  if (index <= numberOfRounds) {
+    let sourceGameProps = {
+      id:   `game-${index}-${window.roundGameCounter[index]}`,
+      name: 'My Game'
+    };
 
     return {
-      ...generateDefaultOptions(index),
+      ...generateDefaultOptions(index, roundLimit),
       ...options,
-      sides: generateSides(sourceGameProps, index, limit),
+      sides: generateSides(sourceGameProps, index, numberOfRounds, roundLimit),
       sourceGame: (!!game ? pick(game, ['id', 'name', 'scheduled']) : null)
     };
   } else {
@@ -62,37 +91,48 @@ function generateGame(game, index, limit, options = {}) {
   }
 }
 
-function generateRandomGames() {
-  let homeScore = Math.floor(Math.random() * 100) + 1;
-  let max = 10;
+function generateRandomGames(options = {}) {
+  window.roundGameCounter = {};
+  const { roundLimit } = options;
+  let homeScore = (
+     roundLimit
+     ? roundLimit > 1
+       ? Math.floor(Math.random() * 100) + 1
+       : null
+     : Math.floor(Math.random() * 100) + 1
+  );
+
   let min = 1;
-  let seed = 6; // 6 is the maximum number of rounds we should support; no tourney is going to have more than 32 setups for a single pool
-  let rootGame = generateGame(undefined, 0, 0);
-  let rootHomeSide = generateGame(rootGame, min, seed, {
-    displayName: `My Game ${min}`,
+  let numberOfRounds = 6;
+  let rootGame = generateGame(undefined, 0, 0, roundLimit);
+  let rootHomeSide = generateGame(rootGame, min, numberOfRounds, roundLimit, {
+    displayName: `My Game ${min}-${window.roundGameCounter[0]}`,
     rank: min
   });
 
-  let rootVisitorSide = generateGame(rootGame, min, seed, {
-    displayName: `My Game ${min}`,
+  let rootVisitorSide = generateGame(rootGame, min, numberOfRounds, roundLimit, {
+    displayName: `My Game ${min}-${window.roundGameCounter[0]}`,
     rank: min
   });
 
-  let visitorScore = Math.floor(Math.random() * 100) + 1;
+  let visitorScore = (
+    roundLimit
+    ? roundLimit > 1
+      ? Math.floor(Math.random() * 100) + 1
+      : null
+    : Math.floor(Math.random() * 100) + 1
+  );
 
   rootGame.sides = {
     home:    {
-      ...generateDefaultOptions(0, 'home'),
+      ...generateDefaultOptions(0, roundLimit, 'home'),
       score: { score: homeScore },
       seed:  rootHomeSide,
-      team: { id: 'home-0', name: 'home-0' }
     },
     visitor: {
-      ...generateDefaultOptions(0, 'visitor'),
-      scheduled: (new Date()).getTime(),
+      ...generateDefaultOptions(0, roundLimit, 'visitor'),
       score: { score: visitorScore },
       seed:  rootVisitorSide,
-      team: { id: 'visitor-0', name: 'visitor-0' }
     }
   };
 
@@ -100,7 +140,7 @@ function generateRandomGames() {
 }
 
 $(document).ready(function() {
-  let games = generateRandomGames();
+  let games = generateRandomGames({ roundLimit: 5 });
 
   console.log(games);
 
