@@ -4,6 +4,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator.jsx';
 
+function calculateScores() {
+  let homeScore = Math.floor(Math.random() * 100) + 1;
+  let visitorScore = Math.floor(Math.random() * 100) + 1;
+  let scores = { homeScore, visitorScore };
+
+  // Haven't figured out how to deal with ties yet
+  if (homeScore === visitorScore) {
+    console.log("recalculating...")
+    scores = calculateScores();
+  }
+
+  return scores;
+}
+
 function generateDefaultOptions(index, roundLimit, side) {
     let name;
 
@@ -43,11 +57,19 @@ function generateSeed(game, index, numberOfRounds, roundLimit) {
   )
 }
 
+function generateSeeds(game, index, numberOfRounds, roundLimit) {
+  return {
+    home:    generateSeed(game, index + 1, numberOfRounds, roundLimit),
+    visitor: generateSeed(game, index + 1, numberOfRounds, roundLimit)
+  };
+}
+
 function generateSides(game, index, numberOfRounds, roundLimit) {
   if (index <= numberOfRounds) {
     let counter;
-    let homeScore = Math.floor(Math.random() * 100) + 1;
-    let visitorScore = Math.floor(Math.random() * 100) + 1;
+    let scores = calculateScores();
+    let { homeScore, visitorScore } = scores;
+    let seeds = generateSeeds(game, index, numberOfRounds, roundLimit);
 
     if (isNumber(window.roundGameCounter[index])) {
       counter = ++window.roundGameCounter[index];
@@ -60,12 +82,12 @@ function generateSides(game, index, numberOfRounds, roundLimit) {
       home:    {
         ...generateDefaultOptions(index, roundLimit, 'home'),
         score: { score: homeScore },
-        seed:  generateSeed(game, index + 1, numberOfRounds, roundLimit)
+        seed:  seeds.home
       },
       visitor: {
         ...generateDefaultOptions(index, roundLimit, 'visitor'),
         score: { score: visitorScore },
-        seed:  generateSeed(game, index + 1, numberOfRounds, roundLimit)
+        seed:  seeds.visitor
       }
     };
   } else {

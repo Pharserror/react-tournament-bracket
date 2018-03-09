@@ -85,36 +85,82 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function generateDefaultOptions(index, side) {
-	  return {
-	    id: 'game-' + index,
-	    name: 'My Game ' + index + (!!side ? ' ' + side : ''),
-	    num: index,
-	    scheduled: new Date().getTime(),
-	    team: { id: side + '-0', name: side + '-0' }
-	  };
+	function calculateScores() {
+	  var homeScore = Math.floor(Math.random() * 100) + 1;
+	  var visitorScore = Math.floor(Math.random() * 100) + 1;
+	  var scores = { homeScore: homeScore, visitorScore: visitorScore };
+
+	  // Haven't figured out how to deal with ties yet
+	  if (homeScore === visitorScore) {
+	    console.log("recalculating...");
+	    scores = calculateScores();
+	  }
+
+	  return scores;
 	}
 
-	function generateSeed(game, index, limit) {
-	  return index === limit ? null : generateGame(game, index, limit, {
-	    displayName: 'My Game ' + index,
+	function generateDefaultOptions(index, roundLimit, side) {
+	  var name = void 0;
+
+	  if (index < roundLimit) {
+	    var winnerMatchIndex = side === 'home' ? window.roundGameCounter[index] + window.roundGameCounter[index] : window.roundGameCounter[index] + window.roundGameCounter[index] + 1;
+
+	    name = 'Winner of ' + (index + 1) + '-' + (winnerMatchIndex - 1);
+	  } else {
+	    name = side + '-' + index + '-' + window.roundGameCounter[index];
+	  }
+
+	  return {
+	    id: name,
+	    name: 'My Game ' + index + '-' + (window.roundGameCounter[index] + 1) + (!!side ? ' ' + side : ''),
+	    num: index,
+	    scheduled: new Date().getTime(),
+	    team: {
+	      id: name,
+	      name: name
+	    }
+	  };
+	  //}
+	}
+
+	function generateSeed(game, index, numberOfRounds, roundLimit) {
+	  return index === numberOfRounds ? null : generateGame(game, index, numberOfRounds, roundLimit, {
+	    displayName: 'My Game ' + index + '-' + window.roundGameCounter[index],
 	    rank: index
 	  });
 	}
 
-	function generateSides(game, index, limit) {
-	  if (index <= limit) {
-	    var homeScore = Math.floor(Math.random() * 100) + 1;
-	    var visitorScore = Math.floor(Math.random() * 100) + 1;
+	function generateSeeds(game, index, numberOfRounds, roundLimit) {
+	  return {
+	    home: generateSeed(game, index + 1, numberOfRounds, roundLimit),
+	    visitor: generateSeed(game, index + 1, numberOfRounds, roundLimit)
+	  };
+	}
+
+	function generateSides(game, index, numberOfRounds, roundLimit) {
+	  if (index <= numberOfRounds) {
+	    var counter = void 0;
+	    var scores = calculateScores();
+	    var homeScore = scores.homeScore,
+	        visitorScore = scores.visitorScore;
+
+	    var seeds = generateSeeds(game, index, numberOfRounds, roundLimit);
+
+	    if ((0, _lodash.isNumber)(window.roundGameCounter[index])) {
+	      counter = ++window.roundGameCounter[index];
+	    } else {
+	      window.roundGameCounter[index] = 0;
+	      counter = 0;
+	    }
 
 	    return {
-	      home: _extends({}, generateDefaultOptions(index, 'home'), {
+	      home: _extends({}, generateDefaultOptions(index, roundLimit, 'home'), {
 	        score: { score: homeScore },
-	        seed: generateSeed(game, index + 1, limit)
+	        seed: seeds.home
 	      }),
-	      visitor: _extends({}, generateDefaultOptions(index, 'visitor'), {
+	      visitor: _extends({}, generateDefaultOptions(index, roundLimit, 'visitor'), {
 	        score: { score: visitorScore },
-	        seed: generateSeed(game, index + 1, limit)
+	        seed: seeds.visitor
 	      })
 	    };
 	  } else {
@@ -122,14 +168,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 
-	function generateGame(game, index, limit) {
-	  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+	function generateGame(game, index, numberOfRounds, roundLimit) {
+	  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
-	  if (index <= limit) {
-	    var sourceGameProps = { id: 'game-' + index, name: 'My Game' };
+	  if (index <= numberOfRounds) {
+	    var sourceGameProps = {
+	      id: 'game-' + index + '-' + window.roundGameCounter[index],
+	      name: 'My Game'
+	    };
 
-	    return _extends({}, generateDefaultOptions(index), options, {
-	      sides: generateSides(sourceGameProps, index, limit),
+	    return _extends({}, generateDefaultOptions(index, roundLimit), options, {
+	      sides: generateSides(sourceGameProps, index, numberOfRounds, roundLimit),
 	      sourceGame: !!game ? (0, _lodash.pick)(game, ['id', 'name', 'scheduled']) : null
 	    });
 	  } else {
@@ -138,34 +187,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function generateRandomGames() {
-	  var homeScore = Math.floor(Math.random() * 100) + 1;
-	  var max = 10;
+	  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+	  window.roundGameCounter = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+	  var roundLimit = options.roundLimit;
+
+	  var homeScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
+
 	  var min = 1;
-	  var seed = 6; // 6 is the maximum number of rounds we should support; no tourney is going to have more than 32 setups for a single pool
-	  var rootGame = generateGame(undefined, 0, 0);
-	  var rootHomeSide = generateGame(rootGame, min, seed, {
-	    displayName: 'My Game ' + min,
+	  var numberOfRounds = 6;
+	  var rootGame = generateGame(undefined, 0, 0, roundLimit);
+	  var rootHomeSide = generateGame(rootGame, min, numberOfRounds, roundLimit, {
+	    displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
 	    rank: min
 	  });
 
-	  var rootVisitorSide = generateGame(rootGame, min, seed, {
-	    displayName: 'My Game ' + min,
+	  var rootVisitorSide = generateGame(rootGame, min, numberOfRounds, roundLimit, {
+	    displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
 	    rank: min
 	  });
 
-	  var visitorScore = Math.floor(Math.random() * 100) + 1;
+	  var visitorScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
 
 	  rootGame.sides = {
-	    home: _extends({}, generateDefaultOptions(0, 'home'), {
+	    home: _extends({}, generateDefaultOptions(0, roundLimit, 'home'), {
 	      score: { score: homeScore },
-	      seed: rootHomeSide,
-	      team: { id: 'home-0', name: 'home-0' }
+	      seed: rootHomeSide
 	    }),
-	    visitor: _extends({}, generateDefaultOptions(0, 'visitor'), {
-	      scheduled: new Date().getTime(),
+	    visitor: _extends({}, generateDefaultOptions(0, roundLimit, 'visitor'), {
 	      score: { score: visitorScore },
-	      seed: rootVisitorSide,
-	      team: { id: 'visitor-0', name: 'visitor-0' }
+	      seed: rootVisitorSide
 	    })
 	  };
 
@@ -173,7 +224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	(0, _jquery2.default)(document).ready(function () {
-	  var games = generateRandomGames();
+	  var games = generateRandomGames({ roundLimit: 5 });
 
 	  console.log(games);
 
