@@ -18,19 +18,26 @@ function calculateScores() {
   return scores;
 }
 
-function generateDefaultOptions(index, roundLimit, side) {
+function generateDefaultOptions(index, roundLimit, seeds, side) {
     let name;
 
-    if (index < roundLimit) {
+    if (index <= roundLimit) {
       let winnerMatchIndex = (
         side === 'home'
         ? window.roundGameCounter[index] + window.roundGameCounter[index]
         : window.roundGameCounter[index] + window.roundGameCounter[index] + 1
       );
 
-      name = `Winner of ${index + 1}-${winnerMatchIndex - 1}`;
+      name = `Winner of ${index + 1}-${winnerMatchIndex + 1}`;
     } else {
-      name = `${side}-${index}-${window.roundGameCounter[index]}`;
+      //name = `${side}-${index}-${window.roundGameCounter[index]}`;
+      name = (
+        !!seeds && !!seeds.home && !!seeds.home.score && !!seeds.home.score.score
+        ? seeds.home.score.score > seeds.visitor.score.score
+          ? seeds.home.team.name
+          : seeds.visitor.team.name
+        : `fuck-${index}-${window.roundGameCounter[index]}`
+      );
     }
 
     return {
@@ -47,6 +54,7 @@ function generateDefaultOptions(index, roundLimit, side) {
 }
 
 function generateSeed(game, index, numberOfRounds, roundLimit) {
+  console.log("generating seed")
   return (
     index === numberOfRounds
     ? null
@@ -58,6 +66,7 @@ function generateSeed(game, index, numberOfRounds, roundLimit) {
 }
 
 function generateSeeds(game, index, numberOfRounds, roundLimit) {
+  console.log("generating seeds")
   return {
     home:    generateSeed(game, index + 1, numberOfRounds, roundLimit),
     visitor: generateSeed(game, index + 1, numberOfRounds, roundLimit)
@@ -65,11 +74,10 @@ function generateSeeds(game, index, numberOfRounds, roundLimit) {
 }
 
 function generateSides(game, index, numberOfRounds, roundLimit) {
-  if (index <= numberOfRounds) {
+  if (index <= numberOfRounds && !!game) {
     let counter;
     let scores = calculateScores();
     let { homeScore, visitorScore } = scores;
-    let seeds = generateSeeds(game, index, numberOfRounds, roundLimit);
 
     if (isNumber(window.roundGameCounter[index])) {
       counter = ++window.roundGameCounter[index];
@@ -78,14 +86,16 @@ function generateSides(game, index, numberOfRounds, roundLimit) {
       counter = 0;
     }
 
+    let seeds = generateSeeds(game, index, numberOfRounds, roundLimit);
+
     return  {
       home:    {
-        ...generateDefaultOptions(index, roundLimit, 'home'),
+        ...generateDefaultOptions(index, roundLimit, seeds, 'home'),
         score: { score: homeScore },
         seed:  seeds.home
       },
       visitor: {
-        ...generateDefaultOptions(index, roundLimit, 'visitor'),
+        ...generateDefaultOptions(index, roundLimit, seeds, 'visitor'),
         score: { score: visitorScore },
         seed:  seeds.visitor
       }
@@ -97,11 +107,15 @@ function generateSides(game, index, numberOfRounds, roundLimit) {
 
 function generateGame(game, index, numberOfRounds, roundLimit, options = {}) {
   if (index <= numberOfRounds) {
-    let sourceGameProps = {
-      id:   `game-${index}-${window.roundGameCounter[index]}`,
-      name: 'My Game'
-    };
+    let sourceGameProps = (
+      !!game
+      ? ({
+        id:   `game-${index}-${window.roundGameCounter[index]}`,
+        name: 'My Game'
+      }) : undefined
+    );
 
+    console.log("generating game")
     return {
       ...generateDefaultOptions(index, roundLimit),
       ...options,
@@ -147,12 +161,12 @@ function generateRandomGames(options = {}) {
 
   rootGame.sides = {
     home:    {
-      ...generateDefaultOptions(0, roundLimit, 'home'),
+      ...generateDefaultOptions(0, roundLimit, {}, 'home'),
       score: { score: homeScore },
       seed:  rootHomeSide,
     },
     visitor: {
-      ...generateDefaultOptions(0, roundLimit, 'visitor'),
+      ...generateDefaultOptions(0, roundLimit, {}, 'visitor'),
       score: { score: visitorScore },
       seed:  rootVisitorSide,
     }
@@ -162,7 +176,7 @@ function generateRandomGames(options = {}) {
 }
 
 $(document).ready(function() {
-  let games = generateRandomGames({ roundLimit: 5 });
+  let games = generateRandomGames({ roundLimit: 0 });
 
   console.log(games);
 
