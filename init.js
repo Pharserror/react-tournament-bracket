@@ -30,14 +30,16 @@ function generateDefaultOptions(index, roundLimit, seeds, side) {
       name = `Winner of ${index + 1}-${winnerMatchIndex + 1}`;
     } else {
       //name = `${side}-${index}-${window.roundGameCounter[index]}`;
-      let homeScore = get(seeds, `${side}.sides.home.score.score`);
-      let visitorScore = get(seeds, `${side}.sides.visitor.score.score`);
+      let homeSide = get(seeds, `${side}.sides.home`);
+      let homeScore = get(homeSide, 'score.score');
+      let visitorSide = get(seeds, `${side}.sides.visitor`);
+      let visitorScore = get(visitorSide, 'score.score');
       name = (
         isNumber(homeScore) && isNumber(visitorScore)
         ? homeScore > visitorScore
-          ? seeds.home.team.name
-          : seeds.visitor.team.name
-        : `fuck-${index}-${window.roundGameCounter[index]}`
+          ? homeSide.team.name
+          : visitorSide.team.name
+          : `game-${index}-${window.roundGameCounter[index]}${!!side ? ` ${side}` : ''}`
       );
     }
 
