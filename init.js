@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { isNumber, pick } from 'lodash';
+import { get, isNumber, pick } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator.jsx';
@@ -30,9 +30,11 @@ function generateDefaultOptions(index, roundLimit, seeds, side) {
       name = `Winner of ${index + 1}-${winnerMatchIndex + 1}`;
     } else {
       //name = `${side}-${index}-${window.roundGameCounter[index]}`;
+      let homeScore = get(seeds, `${side}.sides.home.score.score`);
+      let visitorScore = get(seeds, `${side}.sides.visitor.score.score`);
       name = (
-        !!seeds && !!seeds.home && !!seeds.home.score && !!seeds.home.score.score
-        ? seeds.home.score.score > seeds.visitor.score.score
+        isNumber(homeScore) && isNumber(visitorScore)
+        ? homeScore > visitorScore
           ? seeds.home.team.name
           : seeds.visitor.team.name
         : `fuck-${index}-${window.roundGameCounter[index]}`
