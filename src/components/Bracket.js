@@ -5,6 +5,7 @@ import GameShape from './GameShape';
 import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 import SETTINGS from './settings';
+import COLORS from './colors';
 
 // game has score and seed as props
 const renderBracketOrGame = (game, numRounds, props) => (
@@ -76,7 +77,7 @@ const renderBracketSVG = ({
             key={`${game.id}-${side}-${y}-path`}
             d={pathInfo.join(' ')}
             fill="transparent"
-            stroke="black"
+            stroke={COLORS.BLACK}
           />
         );
       }

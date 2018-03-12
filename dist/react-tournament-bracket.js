@@ -92,22 +92,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Haven't figured out how to deal with ties yet
 	  if (homeScore === visitorScore) {
-	    console.log("recalculating...");
 	    scores = calculateScores();
 	  }
 
 	  return scores;
 	}
 
-	function generateDefaultOptions(index, roundLimit, side) {
+	function generateDefaultOptions(index, roundLimit, seeds, side) {
 	  var name = void 0;
 
-	  if (index < roundLimit) {
+	  if (index <= roundLimit) {
 	    var winnerMatchIndex = side === 'home' ? window.roundGameCounter[index] + window.roundGameCounter[index] : window.roundGameCounter[index] + window.roundGameCounter[index] + 1;
 
-	    name = 'Winner of ' + (index + 1) + '-' + (winnerMatchIndex - 1);
+	    name = 'Winner of ' + (index + 1) + '-' + (winnerMatchIndex + 1);
 	  } else {
-	    name = side + '-' + index + '-' + window.roundGameCounter[index];
+	    //name = `${side}-${index}-${window.roundGameCounter[index]}`;
+	    var homeSide = (0, _lodash.get)(seeds, side + '.sides.home');
+	    var homeScore = (0, _lodash.get)(homeSide, 'score.score');
+	    var visitorSide = (0, _lodash.get)(seeds, side + '.sides.visitor');
+	    var visitorScore = (0, _lodash.get)(visitorSide, 'score.score');
+	    name = (0, _lodash.isNumber)(homeScore) && (0, _lodash.isNumber)(visitorScore) ? homeScore > visitorScore ? homeSide.team.name : visitorSide.team.name : 'game-' + index + '-' + window.roundGameCounter[index] + (!!side ? ' ' + side : '');
 	  }
 
 	  return {
@@ -124,111 +128,133 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function generateSeed(game, index, numberOfRounds, roundLimit) {
-	  return index === numberOfRounds ? null : generateGame(game, index, numberOfRounds, roundLimit, {
-	    displayName: 'My Game ' + index + '-' + window.roundGameCounter[index],
-	    rank: index
+	  return new Promise(function (resolve, reject) {
+	    if (index === numberOfRounds) {
+	      resolve(null);
+	    } else {
+	      generateGame(game, index, numberOfRounds, roundLimit, {
+	        displayName: 'My Game ' + index + '-' + window.roundGameCounter[index],
+	        rank: index
+	      }).then(function (game) {
+	        resolve(game);
+	      });
+	    }
 	  });
 	}
 
 	function generateSeeds(game, index, numberOfRounds, roundLimit) {
-	  return {
-	    home: generateSeed(game, index + 1, numberOfRounds, roundLimit),
-	    visitor: generateSeed(game, index + 1, numberOfRounds, roundLimit)
-	  };
+	  return new Promise(function (resolve, reject) {
+	    generateSeed(game, index + 1, numberOfRounds, roundLimit).then(function (homeSeed) {
+	      generateSeed(game, index + 1, numberOfRounds, roundLimit).then(function (visitorSeed) {
+	        resolve({ home: homeSeed, visitor: visitorSeed });
+	      });
+	    });
+	  });
 	}
 
 	function generateSides(game, index, numberOfRounds, roundLimit) {
-	  if (index <= numberOfRounds) {
-	    var counter = void 0;
-	    var scores = calculateScores();
-	    var homeScore = scores.homeScore,
-	        visitorScore = scores.visitorScore;
+	  return new Promise(function (resolve, reject) {
+	    if (index <= numberOfRounds && !!game) {
+	      var counter = void 0;
+	      var scores = calculateScores();
+	      var homeScore = scores.homeScore,
+	          visitorScore = scores.visitorScore;
 
-	    var seeds = generateSeeds(game, index, numberOfRounds, roundLimit);
 
-	    if ((0, _lodash.isNumber)(window.roundGameCounter[index])) {
-	      counter = ++window.roundGameCounter[index];
+	      if ((0, _lodash.isNumber)(window.roundGameCounter[index])) {
+	        counter = ++window.roundGameCounter[index];
+	      } else {
+	        window.roundGameCounter[index] = 0;
+	        counter = 0;
+	      }
+
+	      generateSeeds(game, index, numberOfRounds, roundLimit).then(function (seeds) {
+	        resolve({
+	          home: _extends({}, generateDefaultOptions(index, roundLimit, seeds, 'home'), {
+	            score: { score: homeScore },
+	            seed: seeds.home
+	          }),
+	          visitor: _extends({}, generateDefaultOptions(index, roundLimit, seeds, 'visitor'), {
+	            score: { score: visitorScore },
+	            seed: seeds.visitor
+	          })
+	        });
+	      });
 	    } else {
-	      window.roundGameCounter[index] = 0;
-	      counter = 0;
+	      resolve(undefined);
 	    }
-
-	    return {
-	      home: _extends({}, generateDefaultOptions(index, roundLimit, 'home'), {
-	        score: { score: homeScore },
-	        seed: seeds.home
-	      }),
-	      visitor: _extends({}, generateDefaultOptions(index, roundLimit, 'visitor'), {
-	        score: { score: visitorScore },
-	        seed: seeds.visitor
-	      })
-	    };
-	  } else {
-	    return undefined;
-	  }
+	  });
 	}
 
 	function generateGame(game, index, numberOfRounds, roundLimit) {
 	  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
-	  if (index <= numberOfRounds) {
-	    var sourceGameProps = {
-	      id: 'game-' + index + '-' + window.roundGameCounter[index],
-	      name: 'My Game'
-	    };
+	  return new Promise(function (resolve, reject) {
+	    if (index <= numberOfRounds) {
+	      var sides = void 0;
+	      var sourceGameProps = !!game ? {
+	        id: 'game-' + index + '-' + window.roundGameCounter[index],
+	        name: 'My Game'
+	      } : undefined;
 
-	    return _extends({}, generateDefaultOptions(index, roundLimit), options, {
-	      sides: generateSides(sourceGameProps, index, numberOfRounds, roundLimit),
-	      sourceGame: !!game ? (0, _lodash.pick)(game, ['id', 'name', 'scheduled']) : null
-	    });
-	  } else {
-	    return undefined;
-	  }
+	      generateSides(sourceGameProps, index, numberOfRounds, roundLimit).then(function (sides) {
+	        resolve(_extends({}, generateDefaultOptions(index, roundLimit), options, {
+	          sides: sides,
+	          sourceGame: !!game ? (0, _lodash.pick)(game, ['id', 'name', 'scheduled']) : null
+	        }));
+	      });
+	    } else {
+	      resolve(undefined);
+	    }
+	  });
 	}
 
 	function generateRandomGames() {
 	  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-	  window.roundGameCounter = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-	  var roundLimit = options.roundLimit;
+	  return new Promise(function (resolve, reject) {
+	    window.roundGameCounter = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+	    var roundLimit = options.roundLimit;
 
-	  var homeScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
+	    var homeScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
 
-	  var min = 1;
-	  var numberOfRounds = 6;
-	  var rootGame = generateGame(undefined, 0, 0, roundLimit);
-	  var rootHomeSide = generateGame(rootGame, min, numberOfRounds, roundLimit, {
-	    displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
-	    rank: min
+	    var visitorScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
+
+	    var min = 1;
+	    var numberOfRounds = 6;
+
+	    generateGame(undefined, 0, 0, roundLimit).then(function (rootGame) {
+	      generateGame(rootGame, min, numberOfRounds, roundLimit, {
+	        displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
+	        rank: min
+	      }).then(function (homeGame) {
+	        generateGame(rootGame, min, numberOfRounds, roundLimit, {
+	          displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
+	          rank: min
+	        }).then(function (visitorGame) {
+	          rootGame.sides = {
+	            home: _extends({}, generateDefaultOptions(0, roundLimit, {}, 'home'), {
+	              score: { score: homeScore },
+	              seed: homeGame
+	            }),
+	            visitor: _extends({}, generateDefaultOptions(0, roundLimit, {}, 'visitor'), {
+	              score: { score: visitorScore },
+	              seed: visitorGame
+	            })
+	          };
+
+	          resolve([rootGame]);
+	        });
+	      });
+	    });
 	  });
-
-	  var rootVisitorSide = generateGame(rootGame, min, numberOfRounds, roundLimit, {
-	    displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
-	    rank: min
-	  });
-
-	  var visitorScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
-
-	  rootGame.sides = {
-	    home: _extends({}, generateDefaultOptions(0, roundLimit, 'home'), {
-	      score: { score: homeScore },
-	      seed: rootHomeSide
-	    }),
-	    visitor: _extends({}, generateDefaultOptions(0, roundLimit, 'visitor'), {
-	      score: { score: visitorScore },
-	      seed: rootVisitorSide
-	    })
-	  };
-
-	  return [rootGame];
 	}
 
 	(0, _jquery2.default)(document).ready(function () {
-	  var games = generateRandomGames({ roundLimit: 5 });
-
-	  console.log(games);
-
-	  _reactDom2.default.render(_react2.default.createElement(_BracketGenerator2.default, { games: games, numRounds: 6 }), document.getElementById('root'));
+	  generateRandomGames({ roundLimit: 0 }).then(function (games) {
+	    console.log(games);
+	    _reactDom2.default.render(_react2.default.createElement(_BracketGenerator2.default, { games: games, numRounds: 6 }), document.getElementById('root'));
+	  });
 	});
 
 /***/ }),
@@ -50148,7 +50174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var svgDimensions = {
 	        height: gameDimensions.height * Math.pow(2, numRounds - 1) + svgPadding * 2,
 	        width: numRounds * (gameDimensions.width + roundSeparatorWidth) + svgPadding * 2,
-	        style: { marginTop: marginTop }
+	        style: { marginTop: marginTop, position: 'relative', zIndex: 999 }
 	      };
 
 	      return _react2.default.createElement(
@@ -50443,7 +50469,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var bottom = sides[homeOnTop ? _GameShape.VISITOR : _GameShape.HOME];
 	      var top = sides[homeOnTop ? _GameShape.HOME : _GameShape.VISITOR];
-	      var topHovered = !!top && !!top.team && !!top.team.id === hoveredTeamId;
+	      var topHovered = !!top && !!top.team && top.team.id === hoveredTeamId;
 	      var bottomHovered = !!bottom && !!bottom.team && bottom.team.id === hoveredTeamId;
 
 	      return _react2.default.createElement(
@@ -70412,11 +70438,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return _react2.default.createElement(
 	    'g',
 	    {
-	      onMouseEnter: function onMouseEnter() {
-	        return onHover(!!side && !!side.team ? side.team.id : null);
+	      onMouseEnter: function onMouseEnter(_event) {
+	        onHover(!!side && !!side.team ? side.team.id : null);
 	      },
-	      onMouseLeave: function onMouseLeave() {
-	        return onHover(null);
+	      onMouseLeave: function onMouseLeave(_event) {
+	        onHover(null);
 	      }
 	    },
 	    _react2.default.createElement(

@@ -4,6 +4,7 @@ import { chain, filter, map, some } from 'lodash';
 import Bracket from './Bracket';
 import winningPathLength from '../util/winningPathLength';
 import GameShape from './GameShape';
+import COLORS from './colors';
 
 /* makeFinals()
  *
@@ -92,7 +93,7 @@ class BracketTitle extends PureComponent {
     const { game, height } = this.props;
 
     return (
-      <h3 style={{ textAlign: 'center' }}>
+      <h3 style={{ textAlign: 'center'}}>
         {game.bracketLabel || game.name} ({height} {height === 1 ? 'round' : 'rounds'})
       </h3>
     );
@@ -149,6 +150,7 @@ export default class BracketGenerator extends Component {
           flexWrap:       'wrap',
           alignItems:     'center',
           justifyContent: 'center',
+          backgroundColor: COLORS._WHITE,
           ...style
         }}
       >

@@ -6,6 +6,7 @@ import moment from 'moment';
 import { compact, isNumber } from 'lodash';
 import SETTINGS from './settings';
 import Side from './Side';
+import COLORS from './colors';
 
 class BracketGame extends PureComponent {
   getGameSides(props, sides) {
@@ -79,11 +80,6 @@ class BracketGame extends PureComponent {
 
     return (
       <svg width="200" height="82" viewBox="0 0 200 82" {...rest}>
-        {/* game time */}
-        <text x="100" y="8" textAnchor="middle" style={gameTimeStyle}>
-          { topText(game) }
-        </text>
-
         {/* backgrounds */}
 
         {/* base background */}
@@ -127,10 +123,6 @@ class BracketGame extends PureComponent {
 
         <line x1="0" y1="34.5" x2="200" y2="34.5" style={teamSeparatorStyle}/>
 
-        {/* game name */}
-        <text x="100" y="68" textAnchor="middle" style={gameNameStyle}>
-          { bottomText(game) }
-        </text>
       </svg>
     );
   }
@@ -160,15 +152,15 @@ BracketGame.defaultProps = {
   homeOnTop:     true,
   hoveredTeamId: null,
   styles:        {
-    backgroundColor:        '#58595e',
-    gameNameStyle:          { fill: '#999', fontSize: 10 },
-    gameTimeStyle:          { fill: '#999', fontSize: 10 },
-    hoverBackgroundColor:   '#222',
-    scoreBackground:        '#787a80',
-    teamNameStyle:          { fill: '#fff', fontSize: 12, textShadow: '1px 1px 1px #222' },
-    teamScoreStyle:         { fill: '#23252d', fontSize: 12 },
-    teamSeparatorStyle:     { stroke: '#444549', strokeWidth: 1 },
-    winningScoreBackground: '#ff7324'
+    backgroundColor:        COLORS.WHITE,
+    gameNameStyle:          { fill: COLORS.BLACK, fontSize: 9 },
+    gameTimeStyle:          { fill: COLORS.BLACK, fontSize: 10 },
+    hoverBackgroundColor:   COLORS.YELLOW,
+    scoreBackground:        COLORS.DGREY,
+    teamNameStyle:          { fill: COLORS.BLACK, fontSize: 12},
+    teamScoreStyle:         { fill: COLORS.BLACK, fontSize: 12 },
+    teamSeparatorStyle:     { stroke: COLORS.WHITE, strokeWidth: 1 },
+    winningScoreBackground: COLORS.BLUE
   },
   topText:       ({ scheduled }) => moment(scheduled).format('l LT')
 };
