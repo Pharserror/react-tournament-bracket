@@ -12,8 +12,8 @@ const Side = ({ onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
 
   return (
     <g
-      onMouseEnter={() => onHover(!!side && !!side.team ? side.team.id : null)}
-      onMouseLeave={() => onHover(null)}
+      onMouseEnter={_event => { onHover(!!side && !!side.team ? side.team.id : null); }}
+      onMouseLeave={_event => { onHover(null); }}
     >
       {/* trigger mouse events on the entire block */}
       <rect x={x} y={y} height={22.5} width={200} fillOpacity={0}>

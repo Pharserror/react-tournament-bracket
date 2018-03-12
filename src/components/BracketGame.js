@@ -31,14 +31,15 @@ class BracketGame extends PureComponent {
   }
 
   getWinningBackground({ bottom, top }) {
-    return (!!top &&
-     !!bottom &&
-     !!top.score &&
-     !!bottom.score &&
-     isNumber(top.score.score) &&
-     isNumber(bottom.score.score) &&
-     top.score.score !== bottom.score.score)
-    ? (
+    return (
+      !!top &&
+      !!bottom &&
+      !!top.score &&
+      !!bottom.score &&
+      isNumber(top.score.score) &&
+      isNumber(bottom.score.score) &&
+      top.score.score !== bottom.score.score
+    ) ? (
       <rect
         {...SETTINGS.SVG.BACKGROUNDS.SCORE}
         style={{ fill: this.props.styles.winningScoreBackground }}
@@ -73,7 +74,7 @@ class BracketGame extends PureComponent {
     const { sides } = game;
     const bottom = sides[ homeOnTop ? VISITOR : HOME ];
     const top = sides[ homeOnTop ? HOME : VISITOR ];
-    const topHovered = (!!top && !!top.team && !!top.team.id === hoveredTeamId);
+    const topHovered = (!!top && !!top.team && top.team.id === hoveredTeamId);
     const bottomHovered = (!!bottom && !!bottom.team && bottom.team.id === hoveredTeamId);
 
     return (

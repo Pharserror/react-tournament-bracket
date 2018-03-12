@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { get, isNumber, pick } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import BracketGenerator from './src/components/BracketGenerator.jsx';
+import BracketGenerator from './src/components/BracketGenerator';
 
 function calculateScores() {
   let homeScore = Math.floor(Math.random() * 100) + 1;
