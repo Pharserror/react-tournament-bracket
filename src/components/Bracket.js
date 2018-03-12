@@ -161,7 +161,7 @@ export default class Bracket extends Component {
     const svgDimensions = {
       height: (gameDimensions.height * Math.pow(2, numRounds - 1)) + svgPadding * 2,
       width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2,
-      style:  { marginTop }
+      style:  { marginTop, position: 'relative', zIndex: 999 }
     };
 
     return (
