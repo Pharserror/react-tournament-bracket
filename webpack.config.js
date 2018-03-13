@@ -2,7 +2,7 @@ module.exports = {
   context: __dirname, // we just want to use $cwd
   entry: {
     //'react-tournament-bracket': ['./src/index.js']
-    'react-tournament-bracket': ['./init.js']
+    'react-tournament-bracket': ['./src/index.js']
   },
 
   output: {
