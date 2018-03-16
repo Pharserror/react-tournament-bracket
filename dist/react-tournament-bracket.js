@@ -66,13 +66,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.dataMassage = undefined;
 
 	var _BracketGenerator = __webpack_require__(2);
 
 	var _BracketGenerator2 = _interopRequireDefault(_BracketGenerator);
 
+	var _dataMassage = __webpack_require__(203);
+
+	var dataMassage = _interopRequireWildcard(_dataMassage);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	exports.dataMassage = dataMassage;
 	exports.default = _BracketGenerator2.default;
 
 /***/ }),
@@ -43049,6 +43057,189 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = v4;
 
+
+/***/ }),
+/* 203 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports.calculateScores = calculateScores;
+	exports.generateDefaultOptions = generateDefaultOptions;
+	exports.generateSeed = generateSeed;
+	exports.generateSeeds = generateSeeds;
+	exports.generateSides = generateSides;
+	exports.generateGame = generateGame;
+	exports.generateRandomGames = generateRandomGames;
+	function calculateScores() {
+	  var homeScore = Math.floor(Math.random() * 100) + 1;
+	  var visitorScore = Math.floor(Math.random() * 100) + 1;
+	  var scores = { homeScore: homeScore, visitorScore: visitorScore };
+
+	  // Haven't figured out how to deal with ties yet
+	  if (homeScore === visitorScore) {
+	    scores = calculateScores();
+	  }
+
+	  return scores;
+	}
+
+	function generateDefaultOptions(index, roundLimit, seeds, side) {
+	  var name = void 0;
+
+	  if (index <= roundLimit) {
+	    var winnerMatchIndex = side === 'home' ? window.roundGameCounter[index] + window.roundGameCounter[index] : window.roundGameCounter[index] + window.roundGameCounter[index] + 1;
+
+	    name = 'Winner of ' + (index + 1) + '-' + (winnerMatchIndex + 1);
+	  } else {
+	    //name = `${side}-${index}-${window.roundGameCounter[index]}`;
+	    var homeSide = get(seeds, side + '.sides.home');
+	    var homeScore = get(homeSide, 'score.score');
+	    var visitorSide = get(seeds, side + '.sides.visitor');
+	    var visitorScore = get(visitorSide, 'score.score');
+	    name = isNumber(homeScore) && isNumber(visitorScore) ? homeScore > visitorScore ? homeSide.team.name : visitorSide.team.name : 'game-' + index + '-' + window.roundGameCounter[index] + (!!side ? ' ' + side : '');
+	  }
+
+	  return {
+	    id: name,
+	    name: 'My Game ' + index + '-' + (window.roundGameCounter[index] + 1) + (!!side ? ' ' + side : ''),
+	    num: index,
+	    scheduled: new Date().getTime(),
+	    team: {
+	      id: name,
+	      name: name
+	    }
+	  };
+	}
+
+	function generateSeed(game, index, numberOfRounds, roundLimit) {
+	  return new Promise(function (resolve, reject) {
+	    if (index === numberOfRounds) {
+	      resolve(null);
+	    } else {
+	      generateGame(game, index, numberOfRounds, roundLimit, {
+	        displayName: 'My Game ' + index + '-' + window.roundGameCounter[index],
+	        rank: index
+	      }).then(function (game) {
+	        resolve(game);
+	      });
+	    }
+	  });
+	}
+
+	function generateSeeds(game, index, numberOfRounds, roundLimit) {
+	  return new Promise(function (resolve, reject) {
+	    generateSeed(game, index + 1, numberOfRounds, roundLimit).then(function (homeSeed) {
+	      generateSeed(game, index + 1, numberOfRounds, roundLimit).then(function (visitorSeed) {
+	        resolve({ home: homeSeed, visitor: visitorSeed });
+	      });
+	    });
+	  });
+	}
+
+	function generateSides(game, index, numberOfRounds, roundLimit) {
+	  return new Promise(function (resolve, reject) {
+	    if (index <= numberOfRounds && !!game) {
+	      var counter = void 0;
+	      var scores = calculateScores();
+	      var homeScore = scores.homeScore,
+	          visitorScore = scores.visitorScore;
+
+
+	      if (isNumber(window.roundGameCounter[index])) {
+	        counter = ++window.roundGameCounter[index];
+	      } else {
+	        window.roundGameCounter[index] = 0;
+	        counter = 0;
+	      }
+
+	      generateSeeds(game, index, numberOfRounds, roundLimit).then(function (seeds) {
+	        resolve({
+	          home: _extends({}, generateDefaultOptions(index, roundLimit, seeds, 'home'), {
+	            score: { score: homeScore },
+	            seed: seeds.home
+	          }),
+	          visitor: _extends({}, generateDefaultOptions(index, roundLimit, seeds, 'visitor'), {
+	            score: { score: visitorScore },
+	            seed: seeds.visitor
+	          })
+	        });
+	      });
+	    } else {
+	      resolve(undefined);
+	    }
+	  });
+	}
+
+	function generateGame(game, index, numberOfRounds, roundLimit) {
+	  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+	  return new Promise(function (resolve, reject) {
+	    if (index <= numberOfRounds) {
+	      var sides = void 0;
+	      var sourceGameProps = !!game ? {
+	        id: 'game-' + index + '-' + window.roundGameCounter[index],
+	        name: 'My Game'
+	      } : undefined;
+
+	      generateSides(sourceGameProps, index, numberOfRounds, roundLimit).then(function (sides) {
+	        resolve(_extends({}, generateDefaultOptions(index, roundLimit), options, {
+	          sides: sides,
+	          sourceGame: !!game ? pick(game, ['id', 'name', 'scheduled']) : null
+	        }));
+	      });
+	    } else {
+	      resolve(undefined);
+	    }
+	  });
+	}
+
+	function generateRandomGames() {
+	  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+	  return new Promise(function (resolve, reject) {
+	    window.roundGameCounter = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+	    var roundLimit = options.roundLimit;
+
+	    var homeScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
+
+	    var visitorScore = roundLimit ? roundLimit > 1 ? Math.floor(Math.random() * 100) + 1 : null : Math.floor(Math.random() * 100) + 1;
+
+	    var min = 1;
+	    var numberOfRounds = 3;
+
+	    generateGame(undefined, 0, 0, roundLimit).then(function (rootGame) {
+	      generateGame(rootGame, min, numberOfRounds, roundLimit, {
+	        displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
+	        rank: min
+	      }).then(function (homeGame) {
+	        generateGame(rootGame, min, numberOfRounds, roundLimit, {
+	          displayName: 'My Game ' + min + '-' + window.roundGameCounter[0],
+	          rank: min
+	        }).then(function (visitorGame) {
+	          rootGame.sides = {
+	            home: _extends({}, generateDefaultOptions(0, roundLimit, {}, 'home'), {
+	              score: { score: homeScore },
+	              seed: homeGame
+	            }),
+	            visitor: _extends({}, generateDefaultOptions(0, roundLimit, {}, 'visitor'), {
+	              score: { score: visitorScore },
+	              seed: visitorGame
+	            })
+	          };
+
+	          resolve([rootGame]);
+	        });
+	      });
+	    });
+	  });
+	}
 
 /***/ })
 /******/ ])
