@@ -169,7 +169,7 @@ export default class BracketGenerator extends Component {
                 <div
                   style={{
                     maxWidth:                '100%',
-                    overflow:                'auto',
+                    overflow:                'scroll',
                     WebkitOverflowScrolling: 'touch'
                   }}
                 >
