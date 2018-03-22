@@ -68,7 +68,7 @@ export function generateDefaultOptions(index, roundLimit, seeds, side, options =
       : window.roundGameCounter[index] + window.roundGameCounter[index] + 1
     );
 
-    name = `Winner of ${index + 1}-${winnerMatchIndex + 1}`;
+    name = `Winner of ${index + 1}-${winnerMatchIndex - 1}`;
   } else {
     //name = `${side}-${index}-${window.roundGameCounter[index]}`;
     let homeSide = get(seeds, `${side}.sides.home`);
@@ -88,7 +88,7 @@ export function generateDefaultOptions(index, roundLimit, seeds, side, options =
 
   return {
     id:        name,
-    name:      `My Game ${index}-${window.roundGameCounter[index] + 1}${!!side ? ` ${side}`: ''}`,
+    name:      `My Game ${index}-${window.roundGameCounter[index]}${!!side ? ` ${side}`: ''}`,
     num:       index,
     scheduled: (new Date()).getTime(),
     team:      {
