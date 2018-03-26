@@ -177,6 +177,7 @@ export default class BracketGenerator extends Component {
                     <div className="row">
                       <Bracket
                         game={game}
+                        games={games}
                         hoveredTeamId={this.state.hoveredTeamId}
                         onHoveredTeamIdChange={this.onHoveredTeamIdChange}
                         {...rest}

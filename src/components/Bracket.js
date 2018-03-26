@@ -7,22 +7,23 @@ import BracketGame from './BracketGame';
 import SETTINGS from './settings';
 
 // game has score and seed as props
-const renderBracketOrGame = (game, numRounds, props) => (
+const renderBracketOrGame = (game, games, numRounds, props) => (
   (!!game &&
    !!game.sides &&
    !!game.sides.home && !!game.sides.visitor &&
    !!game.sides.home.seed && !!game.sides.visitor.seed)
   ? (
-    <Bracket game={game} numRounds={numRounds} {...props} />
+    <Bracket game={game} games={games} numRounds={numRounds} {...props} />
   ) : (
     <div className="col text-right">
-      <BracketGame game={game} {...props} />
+      <BracketGame game={game} games={games} {...props} />
     </div>
   )
 );
 
 const renderBracketSVG = ({
   game,
+  games,
   GameComponent,
   gameDimensions,
   homeOnTop,
@@ -44,6 +45,7 @@ const renderBracketSVG = ({
         key={game.id}
         homeOnTop={homeOnTop}
         game={game}
+        games={games}
         x={x}
         y={y}
       />
@@ -121,7 +123,7 @@ export default class Bracket extends Component {
     svgPadding:          20
   };
 
-  getGameSidesComponents = game => (
+  getGameSidesComponents = (game, games) => (
     !!game.sides
     ? (
       <div className="col col-9">
@@ -130,6 +132,7 @@ export default class Bracket extends Component {
             {
               renderBracketOrGame(
                 game.sides[side].seed,
+                games,
                 this.props.numRounds,
                 {
                   hoveredTeamId:         this.props.hoveredTeamId,
@@ -147,11 +150,13 @@ export default class Bracket extends Component {
     const {
       GameComponent,
       game,
+      games,
       gameDimensions,
       svgPadding,
       roundSeparatorWidth,
       ...rest
     } = this.props;
+
 
     const numRounds = winningPathLength(game);
     let marginTop = (
@@ -167,7 +172,7 @@ export default class Bracket extends Component {
     return (
       <div className="col">
         <div className="row">
-          {this.getGameSidesComponents(game)}
+            {this.getGameSidesComponents(game, games)}
           <div className="col col-3 text-right">
             <svg {...svgDimensions} className={`round-${game.num}`}>
               <g>
@@ -177,6 +182,7 @@ export default class Bracket extends Component {
                     gameDimensions,
                     roundSeparatorWidth,
                     game,
+                    games,
                     round: numRounds,
                     // svgPadding away from the right
                     x: svgDimensions.width - svgPadding - gameDimensions.width,

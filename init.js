@@ -8,7 +8,11 @@ const startingGames = [
   ['home-1', 'visitor-1'],
   ['home-2', 'visitor-2'],
   ['home-3', 'visitor-3'],
-  ['home-4', 'visitor-4']
+  ['home-4', 'visitor-4'],
+  ['home-5', 'visitor-5'],
+  ['home-6', 'visitor-6'],
+  ['home-7', 'visitor-7'],
+  ['home-8', 'visitor-8']
 ];
 
 $(document).ready(function() {
@@ -18,7 +22,7 @@ $(document).ready(function() {
     ReactDOM.render(
       React.createElement(
         BracketGenerator,
-        { games, numRounds: 3 }
+        { games, numRounds: 4 }
       ),
       document.getElementById('root')
     );

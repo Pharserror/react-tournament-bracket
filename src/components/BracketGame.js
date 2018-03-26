@@ -52,6 +52,7 @@ class BracketGame extends PureComponent {
     const {
       bottomText,
       game,
+      games,
       homeOnTop,
       hoveredTeamId,
       onHoveredTeamIdChange,
@@ -119,6 +120,7 @@ class BracketGame extends PureComponent {
         {/* the players */}
         {
           this.getGameSides({
+            games,
             onHover: onHoveredTeamIdChange,
             teamNameStyle,
             teamScoreStyle
@@ -139,6 +141,7 @@ class BracketGame extends PureComponent {
 BracketGame.propTypes = {
   bottomText:            PropTypes.func,
   game:                  GameShape.isRequired,
+  games:                 PropTypes.array,
   homeOnTop:             PropTypes.bool,
   hoveredTeamId:         PropTypes.string,
   onHoveredTeamIdChange: PropTypes.func.isRequired,

@@ -1,8 +1,9 @@
-import { isNumber } from 'lodash';
+import { isNumber, partial } from 'lodash';
 import React, { Component } from 'react';
 import { RectClipped } from './Clipped';
+import { setScore } from '../actions/';
 
-const Side = ({ onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
+const Side = ({ games, onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
   const tooltip = (
     !!side.seed && !!side.team
     ? (
@@ -12,6 +13,17 @@ const Side = ({ onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
 
   return (
     <g
+      onClick={
+        partial(
+          setScore,
+          partial.placeholder,
+          side.game,
+          games[0],
+          side.round,
+          1,
+          side.side
+        )
+      }
       onMouseEnter={_event => { onHover(!!side && !!side.team ? side.team.id : null); }}
       onMouseLeave={_event => { onHover(null); }}
     >

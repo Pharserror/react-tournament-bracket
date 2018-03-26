@@ -87,9 +87,12 @@ export function generateDefaultOptions(index, roundLimit, seeds, side, options =
   }
 
   return {
+    side,
+    game:      window.roundGameCounter[index],
     id:        name,
     name:      `My Game ${index}-${window.roundGameCounter[index]}${!!side ? ` ${side}`: ''}`,
     num:       index,
+    round:     index,
     scheduled: (new Date()).getTime(),
     team:      {
       id:   name,
