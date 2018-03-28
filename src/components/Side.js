@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { RectClipped } from './Clipped';
 import { setScore } from '../actions/';
 
-const Side = ({ games, onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
+const Side = ({ activateScoreInputs, games, onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
   const tooltip = (
     !!side.seed && !!side.team
     ? (
@@ -13,17 +13,7 @@ const Side = ({ games, onHover, side, teamNameStyle, teamScoreStyle, x, y  }) =>
 
   return (
     <g
-      onClick={
-        partial(
-          setScore,
-          partial.placeholder,
-          side.game,
-          games[0],
-          side.round,
-          1,
-          side.side
-        )
-      }
+      onClick={activateScoreInputs}
       onMouseEnter={_event => { onHover(!!side && !!side.team ? side.team.id : null); }}
       onMouseLeave={_event => { onHover(null); }}
     >

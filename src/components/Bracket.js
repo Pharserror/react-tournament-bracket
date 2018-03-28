@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
-import { chain } from 'lodash';
+import { chain, partial } from 'lodash';
 import GameShape from './GameShape';
 import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 import SETTINGS from './settings';
+import { setScore } from '../actions';
 
 // game has score and seed as props
 const renderBracketOrGame = (game, games, numRounds, props) => (
@@ -91,6 +92,14 @@ const renderBracketSVG = ({
  * Displays the bracket that culminates in a particular finals game
  */
 export default class Bracket extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { isSettingScore: false };
+
+    this.activateScoreInputs = this.activateScoreInputs.bind(this);
+  }
+
   static propTypes = {
     game:                GameShape.isRequired,
     GameComponent:       PropTypes.func,
@@ -123,6 +132,11 @@ export default class Bracket extends Component {
     svgPadding:          20
   };
 
+  activateScoreInputs() {
+    debugger;
+    this.setState({ isSettingScore: true });
+  }
+
   getGameSidesComponents = (game, games) => (
     !!game.sides
     ? (
@@ -135,6 +149,7 @@ export default class Bracket extends Component {
                 games,
                 this.props.numRounds,
                 {
+                  activateScoreInputs:   this.activateScoreInputs,
                   hoveredTeamId:         this.props.hoveredTeamId,
                   onHoveredTeamIdChange: this.props.onHoveredTeamIdChange
                 }
@@ -157,7 +172,6 @@ export default class Bracket extends Component {
       ...rest
     } = this.props;
 
-
     const numRounds = winningPathLength(game);
     let marginTop = (
       (((Math.pow(2, (this.props.numRounds - (game.num + 2))) - 1) * 4) + 1) / 4
@@ -172,7 +186,7 @@ export default class Bracket extends Component {
     return (
       <div className="col">
         <div className="row">
-            {this.getGameSidesComponents(game, games)}
+          {this.getGameSidesComponents(game, games)}
           <div className="col col-3 text-right">
             <svg {...svgDimensions} className={`round-${game.num}`}>
               <g>
@@ -183,6 +197,7 @@ export default class Bracket extends Component {
                     roundSeparatorWidth,
                     game,
                     games,
+                    activateScoreInputs: this.activateScoreInputs,
                     round: numRounds,
                     // svgPadding away from the right
                     x: svgDimensions.width - svgPadding - gameDimensions.width,
@@ -193,6 +208,33 @@ export default class Bracket extends Component {
                 }
               </g>
             </svg>
+          </div>
+        </div>
+        <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
+          <div className="col col-3 text-right">
+            <div className="row">
+              <div className="col text-right">
+                <input
+                  type="text"
+                  size="3"
+                  onBlur={
+                    partial(
+                      setScore,
+                      partial.placeholder,
+                      game.sides.home.game,
+                      games[0],
+                      game.sides.home.round,
+                      game.sides.home.side
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col text-right">
+                <input type="text" size="3" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

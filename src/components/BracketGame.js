@@ -50,6 +50,7 @@ class BracketGame extends PureComponent {
 
   render() {
     const {
+      activateScoreInputs,
       bottomText,
       game,
       games,
@@ -120,10 +121,11 @@ class BracketGame extends PureComponent {
         {/* the players */}
         {
           this.getGameSides({
+            activateScoreInputs,
             games,
-            onHover: onHoveredTeamIdChange,
             teamNameStyle,
-            teamScoreStyle
+            teamScoreStyle,
+            onHover: onHoveredTeamIdChange
           }, { bottom, top })
         }
 
