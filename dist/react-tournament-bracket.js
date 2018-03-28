@@ -50874,6 +50874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'div',
 	            { className: 'row', key: game.name + '-' + side },
 	            renderBracketOrGame(game.sides[side].seed, games, _this.props.numRounds, {
+	              activateScoreInputs: _this.activateScoreInputs,
 	              hoveredTeamId: _this.props.hoveredTeamId,
 	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange
 	            })
@@ -50891,6 +50892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createClass(Bracket, [{
 	    key: 'activateScoreInputs',
 	    value: function activateScoreInputs() {
+	      debugger;
 	      this.setState({ isSettingScore: true });
 	    }
 	  }, {
@@ -50904,8 +50906,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          svgPadding = _props.svgPadding,
 	          roundSeparatorWidth = _props.roundSeparatorWidth,
 	          rest = _objectWithoutProperties(_props, ['GameComponent', 'game', 'games', 'gameDimensions', 'svgPadding', 'roundSeparatorWidth']);
-
-	      debugger;
 
 	      var numRounds = (0, _winningPathLength2.default)(game);
 	      var marginTop = ((Math.pow(2, this.props.numRounds - (game.num + 2)) - 1) * 4 + 1) / 4 * _settings2.default.STYLES.ROUND_MARGINS.TOP;
@@ -50963,7 +50963,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                { className: 'col text-right' },
 	                _react2.default.createElement('input', {
 	                  type: 'text',
-	                  size: '3'
+	                  size: '3',
+	                  onBlur: (0, _lodash.partial)(_actions.setScore, _lodash.partial.placeholder, game.sides.home.game, games[0], game.sides.home.round, game.sides.home.side)
 	                })
 	              )
 	            ),
@@ -70049,10 +70050,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _util = __webpack_require__(347);
 
-	function setScore(event, game, games, round, score, side) {
+	function setScore(event, game, games, round, side) {
 	  //const newGames = cloneDeep(games);
 	  var team = (0, _util.findTeam)(undefined, game, games, round, side);
-	  team.score.score = score;
+	  team.score.score = event.target.value; //score;
 	  //return newGames;
 	}
 
