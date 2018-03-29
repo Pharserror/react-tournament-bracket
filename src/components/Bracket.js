@@ -133,7 +133,6 @@ export default class Bracket extends Component {
   };
 
   activateScoreInputs() {
-    debugger;
     this.setState({ isSettingScore: true });
   }
 
@@ -211,31 +210,33 @@ export default class Bracket extends Component {
           </div>
         </div>
         <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-          <div className="col col-3 text-right">
-            <div className="row">
-              <div className="col text-right">
-                <input
-                  type="text"
-                  size="3"
-                  onBlur={
-                    partial(
-                      setScore,
-                      partial.placeholder,
-                      game.sides.home.game,
-                      games[0],
-                      game.sides.home.round,
-                      game.sides.home.side
-                    )
-                  }
-                />
+          <form
+            onSubmit={
+              partial(
+                setScore,
+                partial.placeholder,
+                game.game,
+                games[0],
+                game.round
+              )
+            }
+          >
+            <div className="col col-3 text-right">
+              <div className="row">
+                <div className="col text-right">
+                  <input name="score[home]" size="3" type="text" />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col text-right">
+                  <input name="score[visitor]" size="3" type="text" />
+                </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col text-right">
-                <input type="text" size="3" />
-              </div>
+            <div className="col col-3 text-right">
+              <input type="submit" value="Lock" />
             </div>
-          </div>
+          </form>
         </div>
       </div>
     );

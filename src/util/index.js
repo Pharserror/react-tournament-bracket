@@ -1,6 +1,6 @@
 import { chunk } from 'lodash';
 
-/* findTeam()
+/* findTeams()
  *
  * Search the games tree and return the object that corresponds to the team we
  * are looking for
@@ -11,11 +11,9 @@ import { chunk } from 'lodash';
  *
  * @param round [Number] the round in which the game is
  *
- * @param side [String] 'home' or 'visitor'
- *
  * @returns [Object]
  */
-export function findTeam(chunks, game, games, round, side) {
+export function findTeams(chunks, game, games, round) {
   let homeOrVisitor;
   let max = chunks ? chunks.length : Math.pow(2, round);
   let nextChunk;
@@ -29,10 +27,10 @@ export function findTeam(chunks, game, games, round, side) {
   });
 
   if (games.round + 1 === round) {
-    return games.sides[homeOrVisitor].seed.sides[side];
+    return games.sides[homeOrVisitor].seed.sides;
   }
 
-  return findTeam(nextChunk, game, games.sides[homeOrVisitor].seed, round, side);
+  return findTeams(nextChunk, game, games.sides[homeOrVisitor].seed, round);
 }
 
 export function generateSpread(max, modifier = 0) {

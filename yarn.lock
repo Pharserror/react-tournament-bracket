@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"SwiS@git+ssh://git@github.com:Pharserror/SwiS.git#master":
+  version "0.0.1"
+  resolved "git+ssh://git@github.com:Pharserror/SwiS.git#6d43eba370518be4c8ff912c243487b34600db25"
+
 abbrev@1:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.0.9.tgz#91b4792588a7738c25f35dd6f63752a2f8776135"
@@ -2149,7 +2153,7 @@ lodash.restparam@^3.0.0:
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
 
-lodash@^4.17.4:
+lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
