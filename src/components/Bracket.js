@@ -8,7 +8,7 @@ import SETTINGS from './settings';
 import { setScore } from '../actions';
 
 // game has score and seed as props
-const renderBracketOrGame = (game, games, numRounds, props) => (
+const renderBracketOrGame = (game, games, numRounds, props, state) => (
   (!!game &&
    !!game.sides &&
    !!game.sides.home && !!game.sides.visitor &&
@@ -18,6 +18,35 @@ const renderBracketOrGame = (game, games, numRounds, props) => (
   ) : (
     <div className="col text-right">
       <BracketGame game={game} games={games} {...props} />
+      <div className="row" style={state.isSettingScore ? {} : { display: 'none' }}>
+        <form
+          onSubmit={
+            partial(
+              setScore,
+              partial.placeholder,
+              game.game,
+              games[0],
+              game.round
+            )
+          }
+        >
+          <div className="col col-3 text-right">
+            <div className="row">
+              <div className="col text-right">
+                <input name="score[home]" size="3" type="text" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col text-right">
+                <input name="score[visitor]" size="3" type="text" />
+              </div>
+            </div>
+          </div>
+          <div className="col col-3 text-right">
+            <input type="submit" value="Lock" />
+          </div>
+        </form>
+      </div>
     </div>
   )
 );
@@ -136,7 +165,7 @@ export default class Bracket extends Component {
     this.setState({ isSettingScore: true });
   }
 
-  getGameSidesComponents = (game, games) => (
+  getGameSidesComponents = (game, games, state) => (
     !!game.sides
     ? (
       <div className="col col-9">
@@ -151,7 +180,8 @@ export default class Bracket extends Component {
                   activateScoreInputs:   this.activateScoreInputs,
                   hoveredTeamId:         this.props.hoveredTeamId,
                   onHoveredTeamIdChange: this.props.onHoveredTeamIdChange
-                }
+                },
+                state
               )
             }
           </div>
@@ -185,7 +215,7 @@ export default class Bracket extends Component {
     return (
       <div className="col">
         <div className="row">
-          {this.getGameSidesComponents(game, games)}
+          {this.getGameSidesComponents(game, games, this.state)}
           <div className="col col-3 text-right">
             <svg {...svgDimensions} className={`round-${game.num}`}>
               <g>

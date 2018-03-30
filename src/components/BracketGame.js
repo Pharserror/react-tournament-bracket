@@ -80,7 +80,7 @@ class BracketGame extends PureComponent {
     const bottomHovered = (!!bottom && !!bottom.team && bottom.team.id === hoveredTeamId);
 
     return (
-      <svg width="200" height="82" viewBox="0 0 200 82" {...rest}>
+      <svg width="200" height="82" viewBox="0 0 200 82" style={{ zIndex: '999' }} {...rest}>
         {/* game time */}
         <text x="100" y="8" textAnchor="middle" style={gameTimeStyle}>
           { topText(game) }
