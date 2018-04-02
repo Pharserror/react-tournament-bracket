@@ -50800,11 +50800,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// game has score and seed as props
-	var renderBracketOrGame = function renderBracketOrGame(game, games, numRounds, props) {
+	var renderBracketOrGame = function renderBracketOrGame(game, games, numRounds, props, state) {
 	  return !!game && !!game.sides && !!game.sides.home && !!game.sides.visitor && !!game.sides.home.seed && !!game.sides.visitor.seed ? _react2.default.createElement(Bracket, _extends({ game: game, games: games, numRounds: numRounds }, props)) : _react2.default.createElement(
 	    'div',
 	    { className: 'col text-right' },
-	    _react2.default.createElement(_BracketGame2.default, _extends({ game: game, games: games }, props))
+	    _react2.default.createElement(_BracketGame2.default, _extends({ game: game, games: games }, props)),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'row', style: state.isSettingScore ? {} : { display: 'none' } },
+	      renderScoreInputsForm(game, games)
+	    )
 	  );
 	};
 
@@ -50866,6 +50871,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }).flatten(true).value());
 	};
 
+	var renderScoreInputsForm = function renderScoreInputsForm(game, games) {
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'col' },
+	    _react2.default.createElement(
+	      'form',
+	      {
+	        onSubmit: (0, _lodash.partial)(_actions.setScore, _lodash.partial.placeholder, game.game, games[0], game.round)
+	      },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col col-9 text-right' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'row' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col text-right' },
+	              _react2.default.createElement('input', { name: 'score[home]', size: '3', type: 'text' })
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'row' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col text-right' },
+	              _react2.default.createElement('input', { name: 'score[visitor]', size: '3', type: 'text' })
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col col-3 text-right' },
+	          _react2.default.createElement('input', { type: 'submit', value: 'Lock' })
+	        )
+	      )
+	    )
+	  );
+	};
+
 	/**
 	 * Displays the bracket that culminates in a particular finals game
 	 */
@@ -50878,7 +50927,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = _possibleConstructorReturn(this, (Bracket.__proto__ || Object.getPrototypeOf(Bracket)).call(this, props));
 
-	    _this.getGameSidesComponents = function (game, games) {
+	    _this.getGameSidesComponents = function (game, games, state) {
 	      return !!game.sides ? _react2.default.createElement(
 	        'div',
 	        { className: 'col col-9' },
@@ -50890,7 +50939,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              activateScoreInputs: _this.activateScoreInputs,
 	              hoveredTeamId: _this.props.hoveredTeamId,
 	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange
-	            })
+	            }, state)
 	          );
 	        })
 	      ) : null;
@@ -50934,7 +50983,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          this.getGameSidesComponents(game, games),
+	          this.getGameSidesComponents(game, games, this.state),
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'col col-3 text-right' },
@@ -50964,39 +51013,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row', style: this.state.isSettingScore ? {} : { display: 'none' } },
-	          _react2.default.createElement(
-	            'form',
-	            {
-	              onSubmit: (0, _lodash.partial)(_actions.setScore, _lodash.partial.placeholder, game.game, games[0], game.round)
-	            },
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'col col-3 text-right' },
-	              _react2.default.createElement(
-	                'div',
-	                { className: 'row' },
-	                _react2.default.createElement(
-	                  'div',
-	                  { className: 'col text-right' },
-	                  _react2.default.createElement('input', { name: 'score[home]', size: '3', type: 'text' })
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'div',
-	                { className: 'row' },
-	                _react2.default.createElement(
-	                  'div',
-	                  { className: 'col text-right' },
-	                  _react2.default.createElement('input', { name: 'score[visitor]', size: '3', type: 'text' })
-	                )
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'col col-3 text-right' },
-	              _react2.default.createElement('input', { type: 'submit', value: 'Lock' })
-	            )
-	          )
+	          renderScoreInputsForm(game, games)
 	        )
 	      );
 	    }
@@ -51266,7 +51283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      return _react2.default.createElement(
 	        'svg',
-	        _extends({ width: '200', height: '82', viewBox: '0 0 200 82' }, rest),
+	        _extends({ width: '200', height: '82', viewBox: '0 0 200 82', style: { zIndex: '999' } }, rest),
 	        _react2.default.createElement(
 	          'text',
 	          { x: '100', y: '8', textAnchor: 'middle', style: gameTimeStyle },

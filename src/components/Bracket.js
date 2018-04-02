@@ -19,33 +19,7 @@ const renderBracketOrGame = (game, games, numRounds, props, state) => (
     <div className="col text-right">
       <BracketGame game={game} games={games} {...props} />
       <div className="row" style={state.isSettingScore ? {} : { display: 'none' }}>
-        <form
-          onSubmit={
-            partial(
-              setScore,
-              partial.placeholder,
-              game.game,
-              games[0],
-              game.round
-            )
-          }
-        >
-          <div className="col col-3 text-right">
-            <div className="row">
-              <div className="col text-right">
-                <input name="score[home]" size="3" type="text" />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col text-right">
-                <input name="score[visitor]" size="3" type="text" />
-              </div>
-            </div>
-          </div>
-          <div className="col col-3 text-right">
-            <input type="submit" value="Lock" />
-          </div>
-        </form>
+        {renderScoreInputsForm(game, games)}
       </div>
     </div>
   )
@@ -116,6 +90,40 @@ const renderBracketSVG = ({
     .value()
   );
 };
+
+const renderScoreInputsForm = (game, games) => (
+  <div className="col">
+    <form
+      onSubmit={
+        partial(
+          setScore,
+          partial.placeholder,
+          game.game,
+          games[0],
+          game.round
+        )
+      }
+    >
+      <div className="row">
+        <div className="col col-9 text-right">
+          <div className="row">
+            <div className="col text-right">
+              <input name="score[home]" size="3" type="text" />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col text-right">
+              <input name="score[visitor]" size="3" type="text" />
+            </div>
+          </div>
+        </div>
+        <div className="col col-3 text-right">
+          <input type="submit" value="Lock" />
+        </div>
+      </div>
+    </form>
+  </div>
+);
 
 /**
  * Displays the bracket that culminates in a particular finals game
@@ -240,33 +248,7 @@ export default class Bracket extends Component {
           </div>
         </div>
         <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-          <form
-            onSubmit={
-              partial(
-                setScore,
-                partial.placeholder,
-                game.game,
-                games[0],
-                game.round
-              )
-            }
-          >
-            <div className="col col-3 text-right">
-              <div className="row">
-                <div className="col text-right">
-                  <input name="score[home]" size="3" type="text" />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col text-right">
-                  <input name="score[visitor]" size="3" type="text" />
-                </div>
-              </div>
-            </div>
-            <div className="col col-3 text-right">
-              <input type="submit" value="Lock" />
-            </div>
-          </form>
+          {renderScoreInputsForm(game, games)}
         </div>
       </div>
     );
