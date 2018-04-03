@@ -169,6 +169,23 @@ export default class Bracket extends Component {
     svgPadding:          20
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { home: currentHome, visitor: currentVisitor } = this.props.game.sides;
+    const { home: nextHome, visitor: nextVisitor } = nextProps.game.sides;
+
+    /* TODO: Component still not updating immediately after score is set;
+     * have to hover over team to get it to update
+     */
+    return (
+      this.state.isSettingScore !== nextState.isSettingScore ||
+      this.props.hoveredTeamId !== nextProps.hoveredTeamId ||
+      currentHome.score.score !== nextHome.score.score ||
+      currentVisitor.score.score !== nextVisitor.score.score ||
+      currentHome.team.name !== nextHome.team.name ||
+      currentVisitor.team.name !== nextVisitor.team.name
+    );
+  }
+
   activateScoreInputs() {
     this.setState({ isSettingScore: true });
   }

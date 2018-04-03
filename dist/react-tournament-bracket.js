@@ -50952,6 +50952,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  _createClass(Bracket, [{
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      var _props$game$sides = this.props.game.sides,
+	          currentHome = _props$game$sides.home,
+	          currentVisitor = _props$game$sides.visitor;
+	      var _nextProps$game$sides = nextProps.game.sides,
+	          nextHome = _nextProps$game$sides.home,
+	          nextVisitor = _nextProps$game$sides.visitor;
+
+	      /* TODO: Component still not updating immediately after score is set;
+	       * have to hover over team to get it to update
+	       */
+
+	      return this.state.isSettingScore !== nextState.isSettingScore || this.props.hoveredTeamId !== nextProps.hoveredTeamId || currentHome.score.score !== nextHome.score.score || currentVisitor.score.score !== nextVisitor.score.score || currentHome.team.name !== nextHome.team.name || currentVisitor.team.name !== nextVisitor.team.name;
+	    }
+	  }, {
 	    key: 'activateScoreInputs',
 	    value: function activateScoreInputs() {
 	      this.setState({ isSettingScore: true });
