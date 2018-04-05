@@ -19,11 +19,14 @@ import { gatherFormData } from 'SwiS';
  * @returns [Object] returns nothing yet but should return a new games object
  */
 export function setScore(event, game, games, round) {
-  //const newGames = cloneDeep(games);
   event.preventDefault();
+
+  const newGames = cloneDeep(games);
   const data = gatherFormData(event);
-  const teams = findTeams(undefined, game, games, round);
+  const teams = findTeams(undefined, game, newGames, round);
+
   teams.home.score.score = Number(data.score.home);
   teams.visitor.score.score = Number(data.score.visitor);
-  //return newGames;
+
+  return newGames;
 }

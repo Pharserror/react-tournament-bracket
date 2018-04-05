@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
 import { chain, filter, map, some } from 'lodash';
 import Bracket from './Bracket';
-import winningPathLength from '../util/winningPathLength';
 import GameShape from './GameShape';
+import { setScore } from '../actions';
+import winningPathLength from '../util/winningPathLength';
 
 /* makeFinals()
  *
@@ -105,11 +106,14 @@ export default class BracketGenerator extends Component {
     super(props);
 
     this.onHoveredTeamIdChange = this.onHoveredTeamIdChange.bind(this);
+    this.setScore = this.setScore.bind(this);
     this.state = {
-      finals:        makeFinals({ games: this.props.games }),
+      finals:        makeFinals({ games: props.games }),
+      games:         props.games,
       hoveredTeamId: null
     };
   }
+
   static propTypes = {
     // You must pass in an array of objects that adhere to the GameShape definition
     games:          PropTypes.arrayOf(GameShape).isRequired,
@@ -122,7 +126,7 @@ export default class BracketGenerator extends Component {
   };
 
   componentWillReceiveProps({ games }) { // get games from nextProps
-    if (games !== this.props.games) {
+    if (games !== this.state.games) {
       /* If we get a new set of games and they are not what we already have then
        * we need to recalculate the path length and all that
        */
@@ -134,13 +138,21 @@ export default class BracketGenerator extends Component {
     this.setState({ hoveredTeamId: id });
   }
 
+  setScore(event, game, round) {
+    event.preventDefault();
+    event.persist();
+    this.setState({
+      games: (new Array(setScore(event, game, this.state.games[0], round)))
+    });
+  }
+
   /* Based on this render it should be safe to assume that the data is structured
    * such that we have an array of games that are the grand finals and that all
    * other games are nested in the game.sides.home/visitor properties
    */
   render() {
-    const { games, titleComponent: TitleComponent, style, ...rest } = this.props;
-    const { finals } = this.state;
+    const { titleComponent: TitleComponent, style, ...rest } = this.props;
+    const { finals, games } = this.state;
 
     return (
       <div
@@ -180,6 +192,7 @@ export default class BracketGenerator extends Component {
                         games={games}
                         hoveredTeamId={this.state.hoveredTeamId}
                         onHoveredTeamIdChange={this.onHoveredTeamIdChange}
+                        setScore={this.setScore}
                         {...rest}
                       />
                     </div>

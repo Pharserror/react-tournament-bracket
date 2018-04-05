@@ -5,21 +5,26 @@ import GameShape from './GameShape';
 import winningPathLength from '../util/winningPathLength';
 import BracketGame from './BracketGame';
 import SETTINGS from './settings';
-import { setScore } from '../actions';
 
 // game has score and seed as props
-const renderBracketOrGame = (game, games, numRounds, props, state) => (
+const renderBracketOrGame = (game, games, numRounds, props, setScore, state) => (
   (!!game &&
    !!game.sides &&
    !!game.sides.home && !!game.sides.visitor &&
    !!game.sides.home.seed && !!game.sides.visitor.seed)
   ? (
-    <Bracket game={game} games={games} numRounds={numRounds} {...props} />
+    <Bracket
+      game={game}
+      games={games}
+      numRounds={numRounds}
+      setScore={setScore}
+      {...props}
+    />
   ) : (
     <div className="col text-right">
       <BracketGame game={game} games={games} {...props} />
       <div className="row" style={state.isSettingScore ? {} : { display: 'none' }}>
-        {renderScoreInputsForm(game, games)}
+        {renderScoreInputsForm(game, games, setScore)}
       </div>
     </div>
   )
@@ -91,7 +96,7 @@ const renderBracketSVG = ({
   );
 };
 
-const renderScoreInputsForm = (game, games) => (
+const renderScoreInputsForm = (game, games, setScore) => (
   <div className="col">
     <form
       onSubmit={
@@ -99,7 +104,6 @@ const renderScoreInputsForm = (game, games) => (
           setScore,
           partial.placeholder,
           game.game,
-          games[0],
           game.round
         )
       }
@@ -190,7 +194,7 @@ export default class Bracket extends Component {
     this.setState({ isSettingScore: true });
   }
 
-  getGameSidesComponents = (game, games, state) => (
+  getGameSidesComponents = (game, games, setScore, state) => (
     !!game.sides
     ? (
       <div className="col col-9">
@@ -206,6 +210,7 @@ export default class Bracket extends Component {
                   hoveredTeamId:         this.props.hoveredTeamId,
                   onHoveredTeamIdChange: this.props.onHoveredTeamIdChange
                 },
+                setScore,
                 state
               )
             }
@@ -221,6 +226,7 @@ export default class Bracket extends Component {
       game,
       games,
       gameDimensions,
+      setScore,
       svgPadding,
       roundSeparatorWidth,
       ...rest
@@ -240,7 +246,7 @@ export default class Bracket extends Component {
     return (
       <div className="col">
         <div className="row">
-          {this.getGameSidesComponents(game, games, this.state)}
+          {this.getGameSidesComponents(game, games, setScore, this.state)}
           <div className="col col-3 text-right">
             <svg {...svgDimensions} className={`round-${game.num}`}>
               <g>
@@ -265,7 +271,7 @@ export default class Bracket extends Component {
           </div>
         </div>
         <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-          {renderScoreInputsForm(game, games)}
+          {renderScoreInputsForm(game, games, setScore)}
         </div>
       </div>
     );
