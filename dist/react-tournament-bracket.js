@@ -32629,13 +32629,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _Bracket2 = _interopRequireDefault(_Bracket);
 
-	var _winningPathLength = __webpack_require__(199);
-
-	var _winningPathLength2 = _interopRequireDefault(_winningPathLength);
-
 	var _GameShape = __webpack_require__(198);
 
 	var _GameShape2 = _interopRequireDefault(_GameShape);
+
+	var _actions = __webpack_require__(346);
+
+	var _winningPathLength = __webpack_require__(199);
+
+	var _winningPathLength2 = _interopRequireDefault(_winningPathLength);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32780,8 +32782,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this2 = _possibleConstructorReturn(this, (BracketGenerator.__proto__ || Object.getPrototypeOf(BracketGenerator)).call(this, props));
 
 	    _this2.onHoveredTeamIdChange = _this2.onHoveredTeamIdChange.bind(_this2);
+	    _this2.setScore = _this2.setScore.bind(_this2);
 	    _this2.state = {
-	      finals: makeFinals({ games: _this2.props.games }),
+	      finals: makeFinals({ games: props.games }),
+	      games: props.games,
 	      hoveredTeamId: null
 	    };
 	    return _this2;
@@ -32795,7 +32799,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function componentWillReceiveProps(_ref3) {
 	      var games = _ref3.games;
 	      // get games from nextProps
-	      if (games !== this.props.games) {
+	      if (games !== this.state.games) {
 	        /* If we get a new set of games and they are not what we already have then
 	         * we need to recalculate the path length and all that
 	         */
@@ -32806,6 +32810,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'onHoveredTeamIdChange',
 	    value: function onHoveredTeamIdChange(id) {
 	      this.setState({ hoveredTeamId: id });
+	    }
+	  }, {
+	    key: 'setScore',
+	    value: function setScore(event, game, round) {
+	      event.preventDefault();
+	      event.persist();
+	      var games = new Array((0, _actions.setScore)(event, game, this.state.games[0], round));
+
+	      this.setState({
+	        games: games,
+	        finals: makeFinals({ games: games })
+	      });
 	    }
 
 	    /* Based on this render it should be safe to assume that the data is structured
@@ -32819,12 +32835,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this3 = this;
 
 	      var _props2 = this.props,
-	          games = _props2.games,
 	          TitleComponent = _props2.titleComponent,
 	          style = _props2.style,
-	          rest = _objectWithoutProperties(_props2, ['games', 'titleComponent', 'style']);
+	          rest = _objectWithoutProperties(_props2, ['titleComponent', 'style']);
 
-	      var finals = this.state.finals;
+	      var _state = this.state,
+	          finals = _state.finals,
+	          games = _state.games;
 
 
 	      return _react2.default.createElement(
@@ -32871,7 +32888,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    game: game,
 	                    games: games,
 	                    hoveredTeamId: _this3.state.hoveredTeamId,
-	                    onHoveredTeamIdChange: _this3.onHoveredTeamIdChange
+	                    onHoveredTeamIdChange: _this3.onHoveredTeamIdChange,
+	                    setScore: _this3.setScore
 	                  }, rest))
 	                )
 	              )
@@ -50787,8 +50805,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _settings2 = _interopRequireDefault(_settings);
 
-	var _actions = __webpack_require__(346);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -50800,15 +50816,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// game has score and seed as props
-	var renderBracketOrGame = function renderBracketOrGame(game, games, numRounds, props, state) {
-	  return !!game && !!game.sides && !!game.sides.home && !!game.sides.visitor && !!game.sides.home.seed && !!game.sides.visitor.seed ? _react2.default.createElement(Bracket, _extends({ game: game, games: games, numRounds: numRounds }, props)) : _react2.default.createElement(
+	var renderBracketOrGame = function renderBracketOrGame(game, games, numRounds, props, setScore, state) {
+	  return !!game && !!game.sides && !!game.sides.home && !!game.sides.visitor && !!game.sides.home.seed && !!game.sides.visitor.seed ? _react2.default.createElement(Bracket, _extends({
+	    game: game,
+	    games: games,
+	    numRounds: numRounds,
+	    setScore: setScore
+	  }, props)) : _react2.default.createElement(
 	    'div',
 	    { className: 'col text-right' },
 	    _react2.default.createElement(_BracketGame2.default, _extends({ game: game, games: games }, props)),
 	    _react2.default.createElement(
 	      'div',
 	      { className: 'row', style: state.isSettingScore ? {} : { display: 'none' } },
-	      renderScoreInputsForm(game, games)
+	      renderScoreInputsForm(game, games, setScore)
 	    )
 	  );
 	};
@@ -50871,14 +50892,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }).flatten(true).value());
 	};
 
-	var renderScoreInputsForm = function renderScoreInputsForm(game, games) {
+	var renderScoreInputsForm = function renderScoreInputsForm(game, games, setScore) {
 	  return _react2.default.createElement(
 	    'div',
 	    { className: 'col' },
 	    _react2.default.createElement(
 	      'form',
 	      {
-	        onSubmit: (0, _lodash.partial)(_actions.setScore, _lodash.partial.placeholder, game.game, games[0], game.round)
+	        onSubmit: (0, _lodash.partial)(setScore, _lodash.partial.placeholder, game.game, game.round)
 	      },
 	      _react2.default.createElement(
 	        'div',
@@ -50927,7 +50948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = _possibleConstructorReturn(this, (Bracket.__proto__ || Object.getPrototypeOf(Bracket)).call(this, props));
 
-	    _this.getGameSidesComponents = function (game, games, state) {
+	    _this.getGameSidesComponents = function (game, games, setScore, state) {
 	      return !!game.sides ? _react2.default.createElement(
 	        'div',
 	        { className: 'col col-9' },
@@ -50939,7 +50960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              activateScoreInputs: _this.activateScoreInputs,
 	              hoveredTeamId: _this.props.hoveredTeamId,
 	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange
-	            }, state)
+	            }, setScore, state)
 	          );
 	        })
 	      ) : null;
@@ -50954,6 +50975,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createClass(Bracket, [{
 	    key: 'shouldComponentUpdate',
 	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      // TODO: Make this more efficient
+	      return true;
+
 	      var _props$game$sides = this.props.game.sides,
 	          currentHome = _props$game$sides.home,
 	          currentVisitor = _props$game$sides.visitor;
@@ -50980,9 +51004,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          game = _props.game,
 	          games = _props.games,
 	          gameDimensions = _props.gameDimensions,
+	          setScore = _props.setScore,
 	          svgPadding = _props.svgPadding,
 	          roundSeparatorWidth = _props.roundSeparatorWidth,
-	          rest = _objectWithoutProperties(_props, ['GameComponent', 'game', 'games', 'gameDimensions', 'svgPadding', 'roundSeparatorWidth']);
+	          rest = _objectWithoutProperties(_props, ['GameComponent', 'game', 'games', 'gameDimensions', 'setScore', 'svgPadding', 'roundSeparatorWidth']);
 
 	      var numRounds = (0, _winningPathLength2.default)(game);
 	      var marginTop = ((Math.pow(2, this.props.numRounds - (game.num + 2)) - 1) * 4 + 1) / 4 * _settings2.default.STYLES.ROUND_MARGINS.TOP;
@@ -50999,7 +51024,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          this.getGameSidesComponents(game, games, this.state),
+	          this.getGameSidesComponents(game, games, setScore, this.state),
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'col col-3 text-right' },
@@ -51029,7 +51054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row', style: this.state.isSettingScore ? {} : { display: 'none' } },
-	          renderScoreInputsForm(game, games)
+	          renderScoreInputsForm(game, games, setScore)
 	        )
 	      );
 	    }
@@ -70121,13 +70146,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns [Object] returns nothing yet but should return a new games object
 	 */
 	function setScore(event, game, games, round) {
-	  //const newGames = cloneDeep(games);
 	  event.preventDefault();
+
+	  var newGames = (0, _lodash.cloneDeep)(games);
 	  var data = (0, _SwiS.gatherFormData)(event);
-	  var teams = (0, _util.findTeams)(undefined, game, games, round);
+	  var teams = (0, _util.findTeams)(undefined, game, newGames, round);
+
 	  teams.home.score.score = Number(data.score.home);
 	  teams.visitor.score.score = Number(data.score.visitor);
-	  //return newGames;
+
+	  return newGames;
 	}
 
 /***/ },

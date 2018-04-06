@@ -174,6 +174,9 @@ export default class Bracket extends Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
+    // TODO: Make this more efficient
+    return true;
+
     const { home: currentHome, visitor: currentVisitor } = this.props.game.sides;
     const { home: nextHome, visitor: nextVisitor } = nextProps.game.sides;
 
