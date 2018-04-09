@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import GameShape, { HOME, VISITOR } from './GameShape';
 import controllable from 'react-controllables';
 import moment from 'moment';
-import { compact, isNumber } from 'lodash';
+import { compact, isNumber, merge } from 'lodash';
 import SETTINGS from './settings';
 import Side from './Side';
 
@@ -48,6 +48,28 @@ class BracketGame extends PureComponent {
     ) : null
   }
 
+  getWinningSeparator({ bottom, top }) {
+    return (
+      !!top &&
+      !!bottom &&
+      !!top.score &&
+      !!bottom.score &&
+      isNumber(top.score.score) &&
+      isNumber(bottom.score.score) &&
+      top.score.score !== bottom.score.score
+    ) ? (
+      {
+        style: { stroke: '#FF9999' },
+        y1:    top.score.score >= bottom.score.score ? '34.5' : '57',
+        y2:    top.score.score >= bottom.score.score ? '34.5' : '57'
+      }
+    ) : {
+      x2: '0',
+      y1: '34.5',
+      y2: '34.5'
+    }
+  }
+
   render() {
     const {
       activateScoreInputs,
@@ -80,7 +102,7 @@ class BracketGame extends PureComponent {
     const bottomHovered = (!!bottom && !!bottom.team && bottom.team.id === hoveredTeamId);
 
     return (
-      <svg width="200" height="82" viewBox="0 0 200 82" style={{ zIndex: '999' }} {...rest}>
+      <svg width="200" height="82" viewBox="0 0 200 82" style={{ marginTop: '20px', zIndex: '999' }} {...rest}>
         {/* game time */}
         <text x="100" y="8" textAnchor="middle" style={gameTimeStyle}>
           { topText(game) }
@@ -89,7 +111,7 @@ class BracketGame extends PureComponent {
         {/* backgrounds */}
 
         {/* base background */}
-        <rect x="0" y="12" width="200" height="45" fill={backgroundColor} rx="3" ry="3"/>
+        <rect x="0" y="12" width="200" height="45" fill={backgroundColor} rx="0" ry="0" />
 
         {/* background for the top team */}
         <rect
@@ -98,8 +120,8 @@ class BracketGame extends PureComponent {
           width="200"
           height="22.5"
           fill={topHovered ? hoverBackgroundColor : backgroundColor}
-          rx="3"
-          ry="3"
+          rx="0"
+          ry="0"
         />
         {/* background for the bottom team */}
         <rect
@@ -108,12 +130,12 @@ class BracketGame extends PureComponent {
           width="200"
           height="22.5"
           fill={bottomHovered ? hoverBackgroundColor : backgroundColor}
-          rx="3"
-          ry="3"
+          rx="0"
+          ry="0"
         />
 
         {/* scores background */}
-        <rect x="170" y="12" width="30" height="45" fill={scoreBackground} rx="3" ry="3"/>
+        <rect x="170" y="12" width="30" height="45" fill={scoreBackground} rx="0" ry="0" />
 
         {/* winner background */}
         { this.getWinningBackground({ bottom, top }) }
@@ -129,7 +151,11 @@ class BracketGame extends PureComponent {
           }, { bottom, top })
         }
 
-        <line x1="0" y1="34.5" x2="200" y2="34.5" style={teamSeparatorStyle}/>
+        <line
+          x1="0"
+          x2="200"
+          {...merge({ style: teamSeparatorStyle }, this.getWinningSeparator({ bottom, top }))}
+        />
 
         {/* game name */}
         <text x="100" y="68" textAnchor="middle" style={gameNameStyle}>
@@ -165,15 +191,15 @@ BracketGame.defaultProps = {
   homeOnTop:     true,
   hoveredTeamId: null,
   styles:        {
-    backgroundColor:        '#58595e',
+    backgroundColor:        '#CCCCCC',
     gameNameStyle:          { fill: '#999', fontSize: 10 },
     gameTimeStyle:          { fill: '#999', fontSize: 10 },
     hoverBackgroundColor:   '#222',
     scoreBackground:        '#787a80',
-    teamNameStyle:          { fill: '#fff', fontSize: 12, textShadow: '1px 1px 1px #222' },
+    teamNameStyle:          { fill: '#FFF', fontSize: 12, textShadow: '1px 1px 1px #000' },
     teamScoreStyle:         { fill: '#23252d', fontSize: 12 },
-    teamSeparatorStyle:     { stroke: '#444549', strokeWidth: 1 },
-    winningScoreBackground: '#ff7324'
+    teamSeparatorStyle:     { stroke: '#CCCCCC', strokeWidth: 2 },
+    winningScoreBackground: '#FF9999'
   },
   topText:       ({ scheduled }) => moment(scheduled).format('l LT')
 };

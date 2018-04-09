@@ -27,7 +27,7 @@ export function findTeams(chunks, game, games, round) {
   });
 
   if (games.round + 1 === round) {
-    return games.sides[homeOrVisitor].seed.sides;
+    return [games.sides[homeOrVisitor], games.sides[homeOrVisitor].seed.sides];
   }
 
   return findTeams(nextChunk, game, games.sides[homeOrVisitor].seed, round);

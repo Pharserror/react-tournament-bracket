@@ -13,8 +13,8 @@ const SETTINGS = {
     BACKGROUNDS: {
       SCORE: {
         height: '22.5',
-        rx:     '3',
-        ry:     '3',
+        rx:     '0',
+        ry:     '0',
         width:  '30',
         x:      '170',
         y:      '12'

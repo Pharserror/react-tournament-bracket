@@ -107,22 +107,23 @@ const renderScoreInputsForm = (game, games, setScore) => (
           game.round
         )
       }
+      style={{ width: '200px' }}
     >
       <div className="row">
-        <div className="col col-9 text-right">
+        <div className="col col-10 text-right">
           <div className="row">
             <div className="col text-right">
-              <input name="score[home]" size="3" type="text" />
+              <input name="score[home]" style={{ width: '121px' }} type="text" />
             </div>
           </div>
           <div className="row">
             <div className="col text-right">
-              <input name="score[visitor]" size="3" type="text" />
+              <input name="score[visitor]" style={{ width: '121px' }} type="text" />
             </div>
           </div>
         </div>
-        <div className="col col-3 text-right">
-          <input type="submit" value="Lock" />
+        <div className="col col-2 text-right">
+          <input style={{ height: '60px' }} type="submit" value="Lock" />
         </div>
       </div>
     </form>
@@ -174,6 +175,9 @@ export default class Bracket extends Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
+    // TODO: Make this more efficient
+    return true;
+
     const { home: currentHome, visitor: currentVisitor } = this.props.game.sides;
     const { home: nextHome, visitor: nextVisitor } = nextProps.game.sides;
 
@@ -197,7 +201,7 @@ export default class Bracket extends Component {
   getGameSidesComponents = (game, games, setScore, state) => (
     !!game.sides
     ? (
-      <div className="col col-9">
+      <div className="col col-8">
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
             {
@@ -247,31 +251,35 @@ export default class Bracket extends Component {
       <div className="col">
         <div className="row">
           {this.getGameSidesComponents(game, games, setScore, this.state)}
-          <div className="col col-3 text-right">
-            <svg {...svgDimensions} className={`round-${game.num}`}>
-              <g>
-                {
-                  renderBracketSVG({
-                    GameComponent,
-                    gameDimensions,
-                    roundSeparatorWidth,
-                    game,
-                    games,
-                    activateScoreInputs: this.activateScoreInputs,
-                    round: numRounds,
-                    // svgPadding away from the right
-                    x: svgDimensions.width - svgPadding - gameDimensions.width,
-                    // vertically centered first game
-                    y: (svgDimensions.height / 2) - gameDimensions.height / 2,
-                    ...rest
-                  })
-                }
-              </g>
-            </svg>
+          <div className="col col-4 text-right">
+            <div className="row">
+              <div className="col">
+                <svg {...svgDimensions} className={`round-${game.num}`}>
+                  <g>
+                    {
+                      renderBracketSVG({
+                        GameComponent,
+                        gameDimensions,
+                        roundSeparatorWidth,
+                        game,
+                        games,
+                        activateScoreInputs: this.activateScoreInputs,
+                        round: numRounds,
+                        // svgPadding away from the right
+                        x: svgDimensions.width - svgPadding - gameDimensions.width,
+                        // vertically centered first game
+                        y: (svgDimensions.height / 2) - gameDimensions.height / 2,
+                        ...rest
+                      })
+                    }
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
+              {renderScoreInputsForm(game, games, setScore)}
+            </div>
           </div>
-        </div>
-        <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-          {renderScoreInputsForm(game, games, setScore)}
         </div>
       </div>
     );
