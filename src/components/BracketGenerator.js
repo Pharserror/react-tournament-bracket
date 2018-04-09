@@ -141,8 +141,11 @@ export default class BracketGenerator extends Component {
   setScore(event, game, round) {
     event.preventDefault();
     event.persist();
+    const games = (new Array(setScore(event, game, this.state.games[0], round)));
+
     this.setState({
-      games: (new Array(setScore(event, game, this.state.games[0], round)))
+      games,
+      finals: makeFinals({ games })
     });
   }
 

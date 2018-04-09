@@ -32816,8 +32816,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function setScore(event, game, round) {
 	      event.preventDefault();
 	      event.persist();
+	      var games = new Array((0, _actions.setScore)(event, game, this.state.games[0], round));
+
 	      this.setState({
-	        games: new Array((0, _actions.setScore)(event, game, this.state.games[0], round))
+	        games: games,
+	        finals: makeFinals({ games: games })
 	      });
 	    }
 
