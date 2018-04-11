@@ -188,7 +188,7 @@ export default class BracketGenerator extends Component {
                     WebkitOverflowScrolling: 'touch'
                   }}
                 >
-                  <div className="container">
+                  <div className="container-fluid">
                     <div className="row">
                       <Bracket
                         game={game}

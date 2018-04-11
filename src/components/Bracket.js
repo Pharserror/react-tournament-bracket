@@ -107,10 +107,10 @@ const renderScoreInputsForm = (game, games, setScore) => (
           game.round
         )
       }
-      style={{ width: '200px' }}
+      style={{ marginLeft: 'auto', width: '264px' }}
     >
       <div className="row">
-        <div className="col col-10 text-right">
+        <div className="col col-7 offset-1 text-right">
           <div className="row">
             <div className="col text-right">
               <input name="score[home]" style={{ width: '121px' }} type="text" />
@@ -122,7 +122,7 @@ const renderScoreInputsForm = (game, games, setScore) => (
             </div>
           </div>
         </div>
-        <div className="col col-2 text-right">
+        <div className="col col-4 text-right">
           <input style={{ height: '60px' }} type="submit" value="Lock" />
         </div>
       </div>
@@ -201,7 +201,7 @@ export default class Bracket extends Component {
   getGameSidesComponents = (game, games, setScore, state) => (
     !!game.sides
     ? (
-      <div className="col col-8">
+      <div className="col col-9">
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
             {
@@ -251,7 +251,7 @@ export default class Bracket extends Component {
       <div className="col">
         <div className="row">
           {this.getGameSidesComponents(game, games, setScore, this.state)}
-          <div className="col col-4 text-right">
+          <div className="col col-3 text-right">
             <div className="row">
               <div className="col">
                 <svg {...svgDimensions} className={`round-${game.num}`}>
