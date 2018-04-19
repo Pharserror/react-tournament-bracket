@@ -12,12 +12,12 @@ const SETTINGS = {
   SVG: {
     BACKGROUNDS: {
       SCORE: {
-        height: '22.5',
+        height: '30',
         rx:     '0',
         ry:     '0',
         width:  '30',
         x:      '170',
-        y:      '12'
+        y:      '3'
       }
     }
   }

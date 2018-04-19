@@ -3,7 +3,16 @@ import React, { Component } from 'react';
 import { RectClipped } from './Clipped';
 import { setScore } from '../actions/';
 
-const Side = ({ activateScoreInputs, games, onHover, side, teamNameStyle, teamScoreStyle, x, y  }) => {
+const Side = ({
+  activateScoreInputs,
+  games,
+  onHover,
+  side,
+  teamNameStyle,
+  teamScoreStyle,
+  x,
+  y
+}) => {
   const tooltip = (
     !!side.seed && !!side.team
     ? (
@@ -18,23 +27,23 @@ const Side = ({ activateScoreInputs, games, onHover, side, teamNameStyle, teamSc
       onMouseLeave={_event => { onHover(null); }}
     >
       {/* trigger mouse events on the entire block */}
-      <rect x={x} y={y} height={22.5} width={200} fillOpacity={0}>
+      <rect x={x} y={y} height={40} width={200} fillOpacity={0}>
         {tooltip}
       </rect>
-      <RectClipped x={x} y={y} height={22.5} width={165}>
+      <RectClipped x={x} y={y} height={40} width={165}>
         <text
           style={{
             ...teamNameStyle,
             fontStyle: !!side.seed && !!side.seed.sourcePool ? 'italic' : null
           }}
           x={x + 5}
-          y={y + 16}
+          y={y + (side.side === 'home' ? 15 : 13)}
         >
           {tooltip}
           {!!side.team ? side.team.name : (!!side.name ? side.name : null)}
         </text>
       </RectClipped>
-      <text x={x + 185} y={y + 16} style={teamScoreStyle} textAnchor="middle">
+      <text x={x + 185} y={y + (side.side === 'home' ? 15 : 13)} style={teamScoreStyle} textAnchor="middle">
         {!!side.score && isNumber(side.score.score) ? side.score.score : null}
       </text>
     </g>

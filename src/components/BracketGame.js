@@ -15,7 +15,7 @@ class BracketGame extends PureComponent {
           {...props}
           side={sides.top}
           x={0}
-          y={12}
+          y={8}
         />
       ) : null
     ), (
@@ -24,7 +24,7 @@ class BracketGame extends PureComponent {
           {...props}
           side={sides.bottom}
           x={0}
-          y={34.5}
+          y={45}
         />
       ) : null
     )];
@@ -43,7 +43,7 @@ class BracketGame extends PureComponent {
       <rect
         {...SETTINGS.SVG.BACKGROUNDS.SCORE}
         style={{ fill: this.props.styles.winningScoreBackground }}
-        y={top.score.score > bottom.score.score ? "12" : "34.5"}
+        y={top.score.score > bottom.score.score ? "3" : "35"}
       />
     ) : null
   }
@@ -60,13 +60,13 @@ class BracketGame extends PureComponent {
     ) ? (
       {
         style: { stroke: '#FF9999' },
-        y1:    top.score.score >= bottom.score.score ? '34.5' : '57',
-        y2:    top.score.score >= bottom.score.score ? '34.5' : '57'
+        y1:    top.score.score >= bottom.score.score ? '37.5' : '65',
+        y2:    top.score.score >= bottom.score.score ? '37.5' : '65'
       }
     ) : {
       x2: '0',
-      y1: '34.5',
-      y2: '34.5'
+      y1: '37.5',
+      y2: '37.5'
     }
   }
 
@@ -111,14 +111,14 @@ class BracketGame extends PureComponent {
         {/* backgrounds */}
 
         {/* base background */}
-        <rect x="0" y="12" width="200" height="45" fill={backgroundColor} rx="0" ry="0" />
+        <rect x="0" y="3" width="200" height="45" fill={backgroundColor} rx="0" ry="0" />
 
         {/* background for the top team */}
         <rect
           x="0"
-          y="12"
-          width="200"
-          height="22.5"
+          y="3"
+          width="199"
+          height="32"
           fill={topHovered ? hoverBackgroundColor : backgroundColor}
           rx="0"
           ry="0"
@@ -126,16 +126,16 @@ class BracketGame extends PureComponent {
         {/* background for the bottom team */}
         <rect
           x="0"
-          y="34.5"
-          width="200"
-          height="22.5"
+          y="35"
+          width="199"
+          height="32"
           fill={bottomHovered ? hoverBackgroundColor : backgroundColor}
           rx="0"
           ry="0"
         />
 
         {/* scores background */}
-        <rect x="170" y="12" width="30" height="45" fill={scoreBackground} rx="0" ry="0" />
+        <rect x="170" y="3" width="30" height="64" fill={scoreBackground} rx="0" ry="0" />
 
         {/* winner background */}
         { this.getWinningBackground({ bottom, top }) }
@@ -158,7 +158,7 @@ class BracketGame extends PureComponent {
         />
 
         {/* game name */}
-        <text x="100" y="68" textAnchor="middle" style={gameNameStyle}>
+        <text x="100" y="80" textAnchor="middle" style={gameNameStyle}>
           { bottomText(game) }
         </text>
       </svg>
@@ -196,9 +196,9 @@ BracketGame.defaultProps = {
     gameTimeStyle:          { fill: '#999', fontSize: 10 },
     hoverBackgroundColor:   '#222',
     scoreBackground:        '#787a80',
-    teamNameStyle:          { fill: '#FFF', fontSize: 12, textShadow: '1px 1px 1px #000' },
-    teamScoreStyle:         { fill: '#23252d', fontSize: 12 },
-    teamSeparatorStyle:     { stroke: '#CCCCCC', strokeWidth: 2 },
+    teamNameStyle:          { fill: '#FFF', fontSize: 16, textShadow: '1px 1px 1px #000' },
+    teamScoreStyle:         { fill: '#23252d', fontSize: 16 },
+    teamSeparatorStyle:     { stroke: '#CCCCCC', strokeWidth: 5 },
     winningScoreBackground: '#FF9999'
   },
   topText:       ({ scheduled }) => moment(scheduled).format('l LT')
