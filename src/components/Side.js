@@ -37,13 +37,13 @@ const Side = ({
             fontStyle: !!side.seed && !!side.seed.sourcePool ? 'italic' : null
           }}
           x={x + 5}
-          y={y + (side.side === 'home' ? 15 : 13)}
+          y={y + (side.side === 'home' ? 20 : 18)}
         >
           {tooltip}
           {!!side.team ? side.team.name : (!!side.name ? side.name : null)}
         </text>
       </RectClipped>
-      <text x={x + 185} y={y + (side.side === 'home' ? 15 : 13)} style={teamScoreStyle} textAnchor="middle">
+      <text x={x + 185} y={y + (side.side === 'home' ? 20 : 18)} style={teamScoreStyle} textAnchor="middle">
         {!!side.score && isNumber(side.score.score) ? side.score.score : null}
       </text>
     </g>
