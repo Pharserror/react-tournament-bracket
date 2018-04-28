@@ -2,6 +2,7 @@ import { isNumber, partial } from 'lodash';
 import React, { Component } from 'react';
 import { RectClipped } from './Clipped';
 import { setScore } from '../actions/';
+import SETTINGS from './settings';
 
 const Side = ({
   activateScoreInputs,
@@ -27,23 +28,23 @@ const Side = ({
       onMouseLeave={_event => { onHover(null); }}
     >
       {/* trigger mouse events on the entire block */}
-      <rect x={x} y={y} height={40} width={200} fillOpacity={0}>
+      <rect x={x} y={y} height={32} width={200} fillOpacity={0}>
         {tooltip}
       </rect>
-      <RectClipped x={x} y={y} height={40} width={165}>
+      <RectClipped x={x} y={y} height={32} width={165}>
         <text
           style={{
             ...teamNameStyle,
             fontStyle: !!side.seed && !!side.seed.sourcePool ? 'italic' : null
           }}
           x={x + 5}
-          y={y + (side.side === 'home' ? 20 : 18)}
+          y={y + (side.side === 'home' ? 20 : 23)}
         >
           {tooltip}
           {!!side.team ? side.team.name : (!!side.name ? side.name : null)}
         </text>
       </RectClipped>
-      <text x={x + 185} y={y + (side.side === 'home' ? 20 : 18)} style={teamScoreStyle} textAnchor="middle">
+      <text x={x + 185} y={y + (side.side === 'home' ? 20 : 23)} style={teamScoreStyle} textAnchor="middle">
         {!!side.score && isNumber(side.score.score) ? side.score.score : null}
       </text>
     </g>

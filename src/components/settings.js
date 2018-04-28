@@ -11,7 +11,8 @@ const SETTINGS = {
     },
     ROUND_MARGINS: {
       LEFT: 82,
-      TOP:  88.5
+      TOP:  158.5
+      //TOP:  88.5
     }
   },
   SVG: {

@@ -24,7 +24,7 @@ class BracketGame extends PureComponent {
           {...props}
           side={sides.bottom}
           x={0}
-          y={45}
+          y={40}
         />
       ) : null
     )];

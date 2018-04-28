@@ -237,9 +237,19 @@ export default class Bracket extends Component {
     } = this.props;
 
     const numRounds = winningPathLength(game);
-    let marginTop = (
-      (((Math.pow(2, (this.props.numRounds - (game.num + 2))) - 1) * 4) + 1) / 4
-    ) * SETTINGS.STYLES.ROUND_MARGINS.TOP;
+    /* Notes on this calculation
+     *
+     * The reason we need to calculate the top margin is because it varies based
+     * on round: rounds with more games will have a smaller margin for their
+     * games than rounds with less games
+     */
+    //let marginTop = (
+    //  (((Math.pow(2, (this.props.numRounds - (game.num + 2))) - 1) * 4) + 1) / 4
+    //) * SETTINGS.STYLES.ROUND_MARGINS.TOP;
+    let marginTop = Math.pow(2, ((this.props.numRounds + 1) + ((this.props.numRounds + 1) - (game.num + 2))));
+    //let marginTop = ((((this.props.numRounds - game.num) + 1) - 1) * (20 + 100)) + 16;
+
+    if (game.num === 2) { debugger; }
 
     const svgDimensions = {
       height: (gameDimensions.height * Math.pow(2, numRounds - 1)) + svgPadding * 2,
