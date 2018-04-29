@@ -246,10 +246,11 @@ export default class Bracket extends Component {
     //let marginTop = (
     //  (((Math.pow(2, (this.props.numRounds - (game.num + 2))) - 1) * 4) + 1) / 4
     //) * SETTINGS.STYLES.ROUND_MARGINS.TOP;
-    let marginTop = Math.pow(2, ((this.props.numRounds + 1) + ((this.props.numRounds + 1) - (game.num + 2))));
+    //let marginTop = Math.pow(2, ((this.props.numRounds + 1) + ((this.props.numRounds + 1) - (game.num + 2))));
     //let marginTop = ((((this.props.numRounds - game.num) + 1) - 1) * (20 + 100)) + 16;
-
-    if (game.num === 2) { debugger; }
+    let marginTopFromNextRound = 32 * Math.pow(2, (this.props.numRounds - (game.num + 3)));
+    // For round 0 we want 2^3; for round 1, 2^2, round 3 2^1, round 4 2^0
+    let marginTop = 32 * Math.pow(2, (this.props.numRounds - (game.num + 1))) + marginTopFromNextRound;
 
     const svgDimensions = {
       height: (gameDimensions.height * Math.pow(2, numRounds - 1)) + svgPadding * 2,
