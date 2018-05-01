@@ -103,8 +103,8 @@ class BracketGame extends PureComponent {
 
     return (
       <svg
-        viewBox="0 0 200 82"
         style={{ marginTop: '20px', zIndex: '999' }}
+        viewBox="0 0 200 82"
         {...rest}
         {...SETTINGS.SVG.GAME_WRAPPER}
       >

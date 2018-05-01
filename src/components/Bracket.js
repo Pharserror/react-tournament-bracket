@@ -242,18 +242,28 @@ export default class Bracket extends Component {
      * The reason we need to calculate the top margin is because it varies based
      * on round: rounds with more games will have a smaller margin for their
      * games than rounds with less games
+     *
+     * 130 = The very top margin of 20px + the height of the game SVG (100px) +
+     *       1/2 of the 20px margin between games
+     *
+     * We use Math.pow(2, [0, 1, 2, {4, 8, 16, ...}]) to move down the screen
+     * By the number of games proportional to where the middle of the last round
+     * is: the 2nd round is in the middle of 2 games so we move down 1 game plus
+     * the half of the margin between games to put us in the middle of those 2
+     * The next round we need to be between 4 games so we move down 2 plus 1/2 * 2
+     * margins
+     * The next round we need to be between 8 games so we move down 4 plus 1/2 * 4
+     * => We can see a binary pattern of 1, 2, 4 and this is due to the binary
+     * nature of this bracket layout
+     * {} - denotes values for brackets with more than 8 games in the first round
+     *
+     * - 49 = the top text height of a game + one game side's height
      */
-    //let marginTop = (
-    //  (((Math.pow(2, (this.props.numRounds - (game.num + 2))) - 1) * 4) + 1) / 4
-    //) * SETTINGS.STYLES.ROUND_MARGINS.TOP;
-    //let marginTop = Math.pow(2, ((this.props.numRounds + 1) + ((this.props.numRounds + 1) - (game.num + 2))));
-    //let marginTop = ((((this.props.numRounds - game.num) + 1) - 1) * (20 + 100)) + 16;
-    let marginTopFromNextRound = 32 * Math.pow(2, (this.props.numRounds - (game.num + 3)));
-    // For round 0 we want 2^3; for round 1, 2^2, round 3 2^1, round 4 2^0
-    let marginTop = 32 * Math.pow(2, (this.props.numRounds - (game.num + 1))) + marginTopFromNextRound;
+    let marginTop = (130 * Math.pow(2, (this.props.numRounds - (game.num + 2)))) - 49;
 
     const svgDimensions = {
-      height: (gameDimensions.height * Math.pow(2, numRounds - 1)) + svgPadding * 2,
+      //       80                    + 20
+      height: (gameDimensions.height + svgPadding),
       width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2,
       style:  { marginTop, position: 'relative', zIndex: 999 }
     };
@@ -279,7 +289,7 @@ export default class Bracket extends Component {
                         // svgPadding away from the right
                         x: svgDimensions.width - svgPadding - gameDimensions.width,
                         // vertically centered first game
-                        y: (svgDimensions.height / 2) - gameDimensions.height / 2,
+                        y: 0,
                         ...rest
                       })
                     }
