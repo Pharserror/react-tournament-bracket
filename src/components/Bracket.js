@@ -24,7 +24,7 @@ const renderBracketOrGame = (game, games, numRounds, props, setScore, state) => 
     <div className="col text-right">
       <BracketGame game={game} games={games} {...props} />
       <div className="row" style={state.isSettingScore ? {} : { display: 'none' }}>
-        {renderScoreInputsForm(game, games, setScore)}
+        {renderScoreInputsForm(game, games, 'game', setScore)}
       </div>
     </div>
   )
@@ -75,12 +75,17 @@ const renderBracketSVG = ({
         const isTop = side === 'home' ? homeOnTop : !homeOnTop;
         const multiplier = isTop ? -1 : 1;
 
-        const pathInfo = [
-          `M${x - lineInfo.separation} ${y + gameHeight / 2 + lineInfo.yOffset + multiplier * lineInfo.homeVisitorSpread}`,
-          `H${x - (roundSeparatorWidth / 2)}`,
-          `V${y + gameHeight / 2 + lineInfo.yOffset + ((ySep / 2) * multiplier)}`,
-          `H${x - roundSeparatorWidth + lineInfo.separation}`
-        ];
+        //const pathInfo = [
+        //  `M${x - lineInfo.separation} ${y + gameHeight / 2 + lineInfo.yOffset + multiplier * lineInfo.homeVisitorSpread}`,
+        //  `H${x - (roundSeparatorWidth / 2)}`,
+        //  `V${y + gameHeight / 2 + lineInfo.yOffset + ((ySep / 2) * multiplier)}`,
+        //  `H${x - roundSeparatorWidth + lineInfo.separation}`
+        //];
+        const pathInfo = (
+          side === 'home'
+            ? ['M38 33', 'H32', 'V3', 'H24']
+            : ['M38 64', 'H32', 'V96', 'H24']
+        );
 
         return (
           <path
@@ -96,7 +101,7 @@ const renderBracketSVG = ({
   );
 };
 
-const renderScoreInputsForm = (game, games, setScore) => (
+const renderScoreInputsForm = (game, games, scoreFor, setScore) => (
   <div className="col">
     <form
       onSubmit={
@@ -110,7 +115,10 @@ const renderScoreInputsForm = (game, games, setScore) => (
       style={{ marginLeft: 'auto', width: '264px' }}
     >
       <div className="row">
-        <div className="col col-7 offset-1 text-right">
+        <div
+          className={`col col-${scoreFor === 'game' ? '8' : '7'} offset-1 text-right`}
+          style={scoreFor === 'game' ? { paddingRight: '20px' } : {}}
+        >
           <div className="row">
             <div className="col text-right">
               <input name="score[home]" style={{ width: '121px' }} type="text" />
@@ -122,7 +130,11 @@ const renderScoreInputsForm = (game, games, setScore) => (
             </div>
           </div>
         </div>
-        <div className="col col-4 text-right">
+        {/* TODO: Can potentially use npm classnames to clean this up */}
+        <div
+          className="col col-3 text-right"
+          style={{ paddingLeft: `${scoreFor === 'game' ? '0px' : '13px'}`}}
+        >
           <input style={{ height: '60px' }} type="submit" value="Lock" />
         </div>
       </div>
@@ -298,7 +310,7 @@ export default class Bracket extends Component {
               </div>
             </div>
             <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-              {renderScoreInputsForm(game, games, setScore)}
+              {renderScoreInputsForm(game, games, 'bracket', setScore)}
             </div>
           </div>
         </div>
