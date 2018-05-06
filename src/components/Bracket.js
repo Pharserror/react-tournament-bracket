@@ -83,8 +83,8 @@ const renderBracketSVG = ({
         //];
         const pathInfo = (
           side === 'home'
-            ? ['M38 33', 'H32', 'V3', 'H24']
-            : ['M38 64', 'H32', 'V96', 'H24']
+            ? ['M14 33', 'H6', 'V3', 'H0']
+            : ['M14 64', 'H6', 'V96', 'H0']
         );
 
         return (
@@ -276,7 +276,7 @@ export default class Bracket extends Component {
     const svgDimensions = {
       //       80                    + 20
       height: (gameDimensions.height + svgPadding),
-      width:  (numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2,
+      width:  220,//(numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2,
       style:  { marginTop, position: 'relative', zIndex: 999 }
     };
 
@@ -299,7 +299,7 @@ export default class Bracket extends Component {
                         activateScoreInputs: this.activateScoreInputs,
                         round: numRounds,
                         // svgPadding away from the right
-                        x: svgDimensions.width - svgPadding - gameDimensions.width,
+                        x: 20, //svgDimensions.width - svgPadding - gameDimensions.width,
                         // vertically centered first game
                         y: 0,
                         ...rest
