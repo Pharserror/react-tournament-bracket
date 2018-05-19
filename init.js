@@ -12,7 +12,15 @@ const startingGames = [
   ['home-5', 'visitor-5'],
   ['home-6', 'visitor-6'],
   ['home-7', 'visitor-7'],
-  ['home-8', 'visitor-8']
+  ['home-8', 'visitor-8'],
+  ['home-9', 'visitor-9'],
+  ['home-10', 'visitor-10'],
+  ['home-11', 'visitor-11'],
+  ['home-12', 'visitor-12'],
+  ['home-13', 'visitor-13'],
+  ['home-14', 'visitor-14'],
+  ['home-15', 'visitor-15'],
+  ['home-16', 'visitor-16']
 ];
 
 $(document).ready(function() {
@@ -22,7 +30,7 @@ $(document).ready(function() {
     ReactDOM.render(
       React.createElement(
         BracketGenerator,
-        { games, numRounds: 4 }
+        { games, numRounds: 5 }
       ),
       document.getElementById('root')
     );

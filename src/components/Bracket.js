@@ -271,13 +271,19 @@ export default class Bracket extends Component {
      *
      * - 49 = the top text height of a game + one game side's height
      */
+    //let marginLeft = Math.pow(2, ((this.props.numRounds + 5) - game.num));
     let marginTop = (130 * Math.pow(2, (this.props.numRounds - (game.num + 2)))) - 49;
 
     const svgDimensions = {
       //       80                    + 20
       height: (gameDimensions.height + svgPadding),
       width:  220,//(numRounds * (gameDimensions.width + roundSeparatorWidth)) + svgPadding * 2,
-      style:  { marginTop, position: 'relative', zIndex: 999 }
+      style:  {
+        marginTop,
+        marginLeft: SETTINGS.SVG.STYLES.MARGINS_LEFT[this.props.numRounds][game.num],
+        position:   'relative',
+        zIndex:     999
+      }
     };
 
     return (
@@ -286,7 +292,7 @@ export default class Bracket extends Component {
           {this.getGameSidesComponents(game, games, setScore, this.state)}
           <div className="col col-3 text-right">
             <div className="row">
-              <div className="col">
+              <div className="col" style={{ minWidth: '250px' }}>
                 <svg {...svgDimensions} className={`round-${game.num}`}>
                   <g>
                     {
