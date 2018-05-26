@@ -152,6 +152,8 @@ export default class Bracket extends Component {
     this.state = { isSettingScore: false };
 
     this.activateScoreInputs = this.activateScoreInputs.bind(this);
+      this.getGameSidesComponents
+    this.getLargeColumnSize = this.getLargeColumnSize.bind(this);
   }
 
   static propTypes = {
@@ -213,7 +215,7 @@ export default class Bracket extends Component {
   getGameSidesComponents = (game, games, setScore, state) => (
     !!game.sides
     ? (
-      <div className="col col-9">
+      <div className="col col-9" style={this.getLargeColumnSize(game)}>
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
             {
@@ -235,6 +237,11 @@ export default class Bracket extends Component {
       </div>
     ) : null
   )
+
+  getLargeColumnSize(game) {
+    // TODO: put 250 in a constant in SETTINGS
+    return { minWidth: `${(((this.props.numRounds - 1) - game.num) * 250)}px` };
+  }
 
   render() {
     const {

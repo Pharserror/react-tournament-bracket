@@ -181,13 +181,7 @@ export default class BracketGenerator extends Component {
                 }}
               >
                 <TitleComponent game={game} height={height} />
-                <div
-                  style={{
-                    maxWidth:                '100%',
-                    overflow:                'scroll',
-                    WebkitOverflowScrolling: 'touch'
-                  }}
-                >
+                <div style={{ maxWidth: '100%' }}>
                   <div className="container-fluid">
                     <div className="row">
                       <Bracket
