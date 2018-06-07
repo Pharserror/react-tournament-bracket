@@ -24,7 +24,7 @@ const renderBracketOrGame = (game, games, numRounds, props, setScore, state) => 
     <div className="col text-right">
       <BracketGame game={game} games={games} {...props} />
       <div className="row" style={state.isSettingScore ? {} : { display: 'none' }}>
-        {renderScoreInputsForm(game, games, 'game', setScore)}
+        {renderScoreInputsForm(game, games, props, 'game', setScore)}
       </div>
     </div>
   )
@@ -101,7 +101,7 @@ const renderBracketSVG = ({
   );
 };
 
-const renderScoreInputsForm = (game, games, scoreFor, setScore) => (
+const renderScoreInputsForm = (game, games, props, scoreFor, setScore) => (
   <div className="col">
     <form
       onSubmit={
@@ -116,23 +116,23 @@ const renderScoreInputsForm = (game, games, scoreFor, setScore) => (
     >
       <div className="row">
         <div
-          className={`col col-${scoreFor === 'game' ? '8' : '7'} offset-1 text-right`}
+          className={`col col-${scoreFor === 'game' ? '8' : '7'} offset-1 ${props.styleConfig.textAlignment}`}
           style={scoreFor === 'game' ? { paddingRight: '20px' } : {}}
         >
           <div className="row">
-            <div className="col text-right">
+            <div className={`col ${props.styleConfig.textAlignment}`}>
               <input name="score[home]" style={{ width: '121px' }} type="text" />
             </div>
           </div>
           <div className="row">
-            <div className="col text-right">
+            <div className={`col ${props.styleConfig.textAlignment}`}>
               <input name="score[visitor]" style={{ width: '121px' }} type="text" />
             </div>
           </div>
         </div>
         {/* TODO: Can potentially use npm classnames to clean this up */}
         <div
-          className="col col-3 text-right"
+          className={`col col-3 ${props.styleConfig.textAlignment}`}
           style={{ paddingLeft: `${scoreFor === 'game' ? '0px' : '13px'}`}}
         >
           <input style={{ height: '60px' }} type="submit" value="Lock" />
@@ -150,9 +150,7 @@ export default class Bracket extends Component {
     super(props);
 
     this.state = { isSettingScore: false };
-
     this.activateScoreInputs = this.activateScoreInputs.bind(this);
-      this.getGameSidesComponents
     this.getLargeColumnSize = this.getLargeColumnSize.bind(this);
   }
 
@@ -226,7 +224,8 @@ export default class Bracket extends Component {
                 {
                   activateScoreInputs:   this.activateScoreInputs,
                   hoveredTeamId:         this.props.hoveredTeamId,
-                  onHoveredTeamIdChange: this.props.onHoveredTeamIdChange
+                  onHoveredTeamIdChange: this.props.onHoveredTeamIdChange,
+                  styleConfig:           this.props.styleConfig
                 },
                 setScore,
                 state
@@ -250,6 +249,7 @@ export default class Bracket extends Component {
       games,
       gameDimensions,
       setScore,
+      styleConfig,
       svgPadding,
       roundSeparatorWidth,
       ...rest
@@ -323,7 +323,7 @@ export default class Bracket extends Component {
               </div>
             </div>
             <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-              {renderScoreInputsForm(game, games, 'bracket', setScore)}
+              {renderScoreInputsForm(game, games, { styleConfig }, 'bracket', setScore)}
             </div>
           </div>
         </div>

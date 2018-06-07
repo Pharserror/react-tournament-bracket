@@ -138,76 +138,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	var makeFinals = function makeFinals(_ref) {
 	  var games = _ref.games;
 
-	  /* TODO: This is seriously convoluted. We should be able to grab the keys of
-	   * the games and pass over the array with indexOf
-	   * Unless I revisit this later and find a reason for this madness then it
-	   * needs to be rewritten to be much simpler
-	   */
-	  //const isInGroup = (() => {
-	  //  const gameIdHash =
-	  //    // cycle through all of the games
-	  //    chain(games)
-	  //    // create an object of all top level games with keys set to each game's id
-	  //    .keyBy('id')
-	  //    // Create a new object like { gameName1: 1, ... gameNameN: 1 }
-	  //    .reduce((allGames, gameData, gameName) => {
-	  //      allGames[gameName] = 1;
-	  //      return allGames;
-	  //    }, {})
-	  //    // Return the created object
-	  //    .value();
-
-	  //    /* Finally we return a function that will tell us if a game with id is in
-	  //     * the hash of games passed in
-	  //     */
-	  //  return id => Boolean(gameIdHash[ id ]);
-	  //})();
-
-	  //const gamesFeedInto = map(
-	  //  games,
-	  //  game => ({
-	  //    ...game,
-	  //    feedsInto: filter(
-	  //      games,
-	  //      ({ id, sides }) => (
-	  //        /* If the id of the game is in our top-level object or if it has a
-	  //         * sides property (not the final game?) or its seed is the first game
-	  //         * then it will be returned
-	  //         */
-	  //        isInGroup(id) &&
-	  //        some(
-	  //          sides,
-	  //          ({ seed }) => (
-	  //            !!seed &&
-	  //            !!seed.sourceGame &&
-	  //            seed.rank === 1 &&
-	  //            seed.sourceGame.id === game.id
-	  //          )
-	  //        )
-	  //      )
-	  //    )
-	  //  })
-	  //);
-
-	  return (
-	    //chain(gamesFeedInto)
-	    (0, _lodash.chain)(games)
-	    // get the games that don't feed into anything else in the group, i.e. finals for this game group
-	    //.filter(({ feedsInto }) => feedsInto.length === 0)
-	    .map(
-	    // get their heights
-	    function (game) {
-	      return {
-	        game: game,
-	        height: (0, _winningPathLength2.default)(game)
-	      };
-	    })
-	    // render the tallest bracket first
-	    .sortBy(function (_ref2) {
-	      var height = _ref2.height;
-	      return height * -1;
-	    }).value()
-	  );
+	  return (0, _lodash.chain)(games).map(
+	  // get their heights
+	  function (game) {
+	    return {
+	      game: game,
+	      height: (0, _winningPathLength2.default)(game)
+	    };
+	  })
+	  // render the tallest bracket first
+	  .sortBy(function (_ref2) {
+	    var height = _ref2.height;
+	    return height * -1;
+	  }).value();
 	};
 
 	/**
@@ -382,9 +325,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	BracketGenerator.propTypes = {
 	  // You must pass in an array of objects that adhere to the GameShape definition
 	  games: _propTypes2.default.arrayOf(_GameShape2.default).isRequired,
+	  styleConfig: _propTypes2.default.shape({ textAlignment: _propTypes2.default.string }),
 	  titleComponent: _propTypes2.default.func
 	};
 	BracketGenerator.defaultProps = {
+	  styleConfig: { textAlignment: 'text-left' },
 	  titleComponent: BracketTitle
 	};
 	exports.default = BracketGenerator;
@@ -22527,7 +22472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _react2.default.createElement(
 	      'div',
 	      { className: 'row', style: state.isSettingScore ? {} : { display: 'none' } },
-	      renderScoreInputsForm(game, games, 'game', setScore)
+	      renderScoreInputsForm(game, games, props, 'game', setScore)
 	    )
 	  );
 	};
@@ -22596,7 +22541,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }).flatten(true).value());
 	};
 
-	var renderScoreInputsForm = function renderScoreInputsForm(game, games, scoreFor, setScore) {
+	var renderScoreInputsForm = function renderScoreInputsForm(game, games, props, scoreFor, setScore) {
 	  return _react2.default.createElement(
 	    'div',
 	    { className: 'col' },
@@ -22612,7 +22557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.createElement(
 	          'div',
 	          {
-	            className: 'col col-' + (scoreFor === 'game' ? '8' : '7') + ' offset-1 text-right',
+	            className: 'col col-' + (scoreFor === 'game' ? '8' : '7') + ' offset-1 ' + props.styleConfig.textAlignment,
 	            style: scoreFor === 'game' ? { paddingRight: '20px' } : {}
 	          },
 	          _react2.default.createElement(
@@ -22620,7 +22565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            { className: 'row' },
 	            _react2.default.createElement(
 	              'div',
-	              { className: 'col text-right' },
+	              { className: 'col ' + props.styleConfig.textAlignment },
 	              _react2.default.createElement('input', { name: 'score[home]', style: { width: '121px' }, type: 'text' })
 	            )
 	          ),
@@ -22629,7 +22574,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            { className: 'row' },
 	            _react2.default.createElement(
 	              'div',
-	              { className: 'col text-right' },
+	              { className: 'col ' + props.styleConfig.textAlignment },
 	              _react2.default.createElement('input', { name: 'score[visitor]', style: { width: '121px' }, type: 'text' })
 	            )
 	          )
@@ -22637,7 +22582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.createElement(
 	          'div',
 	          {
-	            className: 'col col-3 text-right',
+	            className: 'col col-3 ' + props.styleConfig.textAlignment,
 	            style: { paddingLeft: '' + (scoreFor === 'game' ? '0px' : '13px') }
 	          },
 	          _react2.default.createElement('input', { style: { height: '60px' }, type: 'submit', value: 'Lock' })
@@ -22670,7 +22615,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderBracketOrGame(game.sides[side].seed, games, _this.props.numRounds, {
 	              activateScoreInputs: _this.activateScoreInputs,
 	              hoveredTeamId: _this.props.hoveredTeamId,
-	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange
+	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange,
+	              styleConfig: _this.props.styleConfig
 	            }, setScore, state)
 	          );
 	        })
@@ -22678,9 +22624,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    _this.state = { isSettingScore: false };
-
 	    _this.activateScoreInputs = _this.activateScoreInputs.bind(_this);
-	    _this.getGameSidesComponents;
 	    _this.getLargeColumnSize = _this.getLargeColumnSize.bind(_this);
 	    return _this;
 	  }
@@ -22724,9 +22668,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          games = _props.games,
 	          gameDimensions = _props.gameDimensions,
 	          setScore = _props.setScore,
+	          styleConfig = _props.styleConfig,
 	          svgPadding = _props.svgPadding,
 	          roundSeparatorWidth = _props.roundSeparatorWidth,
-	          rest = _objectWithoutProperties(_props, ['GameComponent', 'game', 'games', 'gameDimensions', 'setScore', 'svgPadding', 'roundSeparatorWidth']);
+	          rest = _objectWithoutProperties(_props, ['GameComponent', 'game', 'games', 'gameDimensions', 'setScore', 'styleConfig', 'svgPadding', 'roundSeparatorWidth']);
 
 	      var numRounds = (0, _winningPathLength2.default)(game);
 	      /* Notes on this calculation
@@ -22808,7 +22753,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _react2.default.createElement(
 	              'div',
 	              { className: 'row', style: this.state.isSettingScore ? {} : { display: 'none' } },
-	              renderScoreInputsForm(game, games, 'bracket', setScore)
+	              renderScoreInputsForm(game, games, { styleConfig: styleConfig }, 'bracket', setScore)
 	            )
 	          )
 	        )

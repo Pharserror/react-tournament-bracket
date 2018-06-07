@@ -25,7 +25,7 @@ const startingGames = [
 
 $(document).ready(function() {
   //generateRandomGames({ roundLimit: 0 }).then(games => {
-  generateGames({ startingGames, roundLimit: 2 }).then(games => {
+  generateGames({ startingGames, roundLimit: 5 }).then(games => {
     console.log(games);
     ReactDOM.render(
       React.createElement(
