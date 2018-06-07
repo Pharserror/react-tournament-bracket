@@ -262,8 +262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _props2 = this.props,
 	          TitleComponent = _props2.titleComponent,
 	          style = _props2.style,
-	          contentAlignment = _props2.styleConfig.contentAlignment,
-	          rest = _objectWithoutProperties(_props2, ['titleComponent', 'style', 'styleConfig']);
+	          rest = _objectWithoutProperties(_props2, ['titleComponent', 'style']);
 
 	      var _state = this.state,
 	          finals = _state.finals,
@@ -277,7 +276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            display: 'flex',
 	            flexWrap: 'wrap',
 	            alignItems: 'center',
-	            justifyContent: contentAlignment
+	            justifyContent: this.props.styleConfig.contentAlignment
 	          }, style)
 	        },
 	        (0, _lodash.map)(finals, function (_ref4) {

@@ -111,7 +111,6 @@ export default class BracketGenerator extends Component {
     const {
       titleComponent: TitleComponent,
       style,
-      styleConfig: { contentAlignment: contentAlignment },
       ...rest
     } = this.props;
 
@@ -123,7 +122,7 @@ export default class BracketGenerator extends Component {
           display:        'flex',
           flexWrap:       'wrap',
           alignItems:     'center',
-          justifyContent: contentAlignment,
+          justifyContent: this.props.styleConfig.contentAlignment,
           ...style
         }}
       >
