@@ -262,7 +262,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _props2 = this.props,
 	          TitleComponent = _props2.titleComponent,
 	          style = _props2.style,
-	          rest = _objectWithoutProperties(_props2, ['titleComponent', 'style']);
+	          contentAlignment = _props2.styleConfig.contentAlignment,
+	          rest = _objectWithoutProperties(_props2, ['titleComponent', 'style', 'styleConfig']);
 
 	      var _state = this.state,
 	          finals = _state.finals,
@@ -276,7 +277,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            display: 'flex',
 	            flexWrap: 'wrap',
 	            alignItems: 'center',
-	            justifyContent: 'center'
+	            justifyContent: contentAlignment
 	          }, style)
 	        },
 	        (0, _lodash.map)(finals, function (_ref4) {
@@ -325,11 +326,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	BracketGenerator.propTypes = {
 	  // You must pass in an array of objects that adhere to the GameShape definition
 	  games: _propTypes2.default.arrayOf(_GameShape2.default).isRequired,
-	  styleConfig: _propTypes2.default.shape({ textAlignment: _propTypes2.default.string }),
+	  styleConfig: _propTypes2.default.shape({
+	    contentAlignment: _propTypes2.default.string,
+	    textAlignment: _propTypes2.default.string
+	  }),
 	  titleComponent: _propTypes2.default.func
 	};
 	BracketGenerator.defaultProps = {
-	  styleConfig: { textAlignment: 'text-left' },
+	  styleConfig: {
+	    contentAlignment: 'left',
+	    textAlignment: 'text-left'
+	  },
 	  titleComponent: BracketTitle
 	};
 	exports.default = BracketGenerator;

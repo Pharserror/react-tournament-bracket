@@ -63,13 +63,19 @@ export default class BracketGenerator extends Component {
   static propTypes = {
     // You must pass in an array of objects that adhere to the GameShape definition
     games:          PropTypes.arrayOf(GameShape).isRequired,
-    styleConfig:    PropTypes.shape({ textAlignment: PropTypes.string }),
+    styleConfig:    PropTypes.shape({
+      contentAlignment: PropTypes.string,
+      textAlignment:    PropTypes.string
+    }),
     titleComponent: PropTypes.func
   };
 
   // By default we will render a BracketTitle to display the title for the whole bracket
   static defaultProps = {
-    styleConfig:    { textAlignment: 'text-left' },
+    styleConfig:    {
+      contentAlignment: 'left',
+      textAlignment:    'text-left'
+    },
     titleComponent: BracketTitle
   };
 
@@ -102,7 +108,13 @@ export default class BracketGenerator extends Component {
    * other games are nested in the game.sides.home/visitor properties
    */
   render() {
-    const { titleComponent: TitleComponent, style, ...rest } = this.props;
+    const {
+      titleComponent: TitleComponent,
+      style,
+      styleConfig: { contentAlignment: contentAlignment },
+      ...rest
+    } = this.props;
+
     const { finals, games } = this.state;
 
     return (
@@ -111,7 +123,7 @@ export default class BracketGenerator extends Component {
           display:        'flex',
           flexWrap:       'wrap',
           alignItems:     'center',
-          justifyContent: 'center',
+          justifyContent: contentAlignment,
           ...style
         }}
       >
