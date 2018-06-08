@@ -39,6 +39,7 @@ const renderBracketSVG = ({
   lineInfo,
   round,
   roundSeparatorWidth,
+  theme,
   x,
   y,
   ...rest
@@ -92,7 +93,7 @@ const renderBracketSVG = ({
             key={`${game.id}-${side}-${y}-path`}
             d={pathInfo.join(' ')}
             fill="transparent"
-            stroke="black"
+            stroke={theme.connectorColor}
           />
         );
       }
@@ -225,7 +226,8 @@ export default class Bracket extends Component {
                   activateScoreInputs:   this.activateScoreInputs,
                   hoveredTeamId:         this.props.hoveredTeamId,
                   onHoveredTeamIdChange: this.props.onHoveredTeamIdChange,
-                  styleConfig:           this.props.styleConfig
+                  styleConfig:           this.props.styleConfig,
+                  theme:                 this.props.theme
                 },
                 setScore,
                 state

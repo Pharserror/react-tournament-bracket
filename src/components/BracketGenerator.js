@@ -4,6 +4,7 @@ import { chain, filter, map, some } from 'lodash';
 import Bracket from './Bracket';
 import GameShape from './GameShape';
 import { setScore } from '../actions';
+import * as themes from './themes';
 import winningPathLength from '../util/winningPathLength';
 
 /* makeFinals()
@@ -56,7 +57,8 @@ export default class BracketGenerator extends Component {
     this.state = {
       finals:        makeFinals({ games: props.games }),
       games:         props.games,
-      hoveredTeamId: null
+      hoveredTeamId: null,
+      theme:         themes[this.props.styleConfig.theme]
     };
   }
 
@@ -65,7 +67,8 @@ export default class BracketGenerator extends Component {
     games:          PropTypes.arrayOf(GameShape).isRequired,
     styleConfig:    PropTypes.shape({
       contentAlignment: PropTypes.string,
-      textAlignment:    PropTypes.string
+      textAlignment:    PropTypes.string,
+      theme:            PropTypes.string
     }),
     titleComponent: PropTypes.func
   };
@@ -74,7 +77,8 @@ export default class BracketGenerator extends Component {
   static defaultProps = {
     styleConfig:    {
       contentAlignment: 'left',
-      textAlignment:    'text-left'
+      textAlignment:    'text-left',
+      theme:            'dark'
     },
     titleComponent: BracketTitle
   };
@@ -114,7 +118,10 @@ export default class BracketGenerator extends Component {
       ...rest
     } = this.props;
 
-    const { finals, games } = this.state;
+    const { finals, games, theme } = this.state;
+
+    console.log("THEME")
+    console.log(theme)
 
     return (
       <div
@@ -134,7 +141,7 @@ export default class BracketGenerator extends Component {
                 key={game.id}
                 style={{
                   flexGrow: 1,
-                  maxWidth: '100%',
+                  maxWidth: `${this.props.numRounds * 200}px`,
                   textAlign: 'center',
                   minWidth: `${this.props.numRounds * 200}px`
                 }}
@@ -149,6 +156,7 @@ export default class BracketGenerator extends Component {
                         hoveredTeamId={this.state.hoveredTeamId}
                         onHoveredTeamIdChange={this.onHoveredTeamIdChange}
                         setScore={this.setScore}
+                        theme={theme}
                         {...rest}
                       />
                     </div>

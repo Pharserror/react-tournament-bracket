@@ -72,7 +72,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _BracketGenerator2 = _interopRequireDefault(_BracketGenerator);
 
-	var _dataMassage = __webpack_require__(196);
+	var _dataMassage = __webpack_require__(198);
 
 	var dataMassage = _interopRequireWildcard(_dataMassage);
 
@@ -117,9 +117,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _actions = __webpack_require__(193);
 
+	var _themes = __webpack_require__(196);
+
+	var themes = _interopRequireWildcard(_themes);
+
 	var _winningPathLength = __webpack_require__(46);
 
 	var _winningPathLength2 = _interopRequireDefault(_winningPathLength);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -211,7 +217,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _this2.state = {
 	      finals: makeFinals({ games: props.games }),
 	      games: props.games,
-	      hoveredTeamId: null
+	      hoveredTeamId: null,
+	      theme: themes[_this2.props.styleConfig.theme]
 	    };
 	    return _this2;
 	  }
@@ -266,8 +273,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var _state = this.state,
 	          finals = _state.finals,
-	          games = _state.games;
+	          games = _state.games,
+	          theme = _state.theme;
 
+
+	      console.log("THEME");
+	      console.log(theme);
 
 	      return _react2.default.createElement(
 	        'div',
@@ -288,7 +299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              key: game.id,
 	              style: {
 	                flexGrow: 1,
-	                maxWidth: '100%',
+	                maxWidth: _this3.props.numRounds * 200 + 'px',
 	                textAlign: 'center',
 	                minWidth: _this3.props.numRounds * 200 + 'px'
 	              }
@@ -308,7 +319,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    games: games,
 	                    hoveredTeamId: _this3.state.hoveredTeamId,
 	                    onHoveredTeamIdChange: _this3.onHoveredTeamIdChange,
-	                    setScore: _this3.setScore
+	                    setScore: _this3.setScore,
+	                    theme: theme
 	                  }, rest))
 	                )
 	              )
@@ -327,14 +339,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  games: _propTypes2.default.arrayOf(_GameShape2.default).isRequired,
 	  styleConfig: _propTypes2.default.shape({
 	    contentAlignment: _propTypes2.default.string,
-	    textAlignment: _propTypes2.default.string
+	    textAlignment: _propTypes2.default.string,
+	    theme: _propTypes2.default.string
 	  }),
 	  titleComponent: _propTypes2.default.func
 	};
 	BracketGenerator.defaultProps = {
 	  styleConfig: {
 	    contentAlignment: 'left',
-	    textAlignment: 'text-left'
+	    textAlignment: 'text-left',
+	    theme: 'dark'
 	  },
 	  titleComponent: BracketTitle
 	};
@@ -22492,9 +22506,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      lineInfo = _ref.lineInfo,
 	      round = _ref.round,
 	      roundSeparatorWidth = _ref.roundSeparatorWidth,
+	      theme = _ref.theme,
 	      x = _ref.x,
 	      y = _ref.y,
-	      rest = _objectWithoutProperties(_ref, ['game', 'games', 'GameComponent', 'gameDimensions', 'homeOnTop', 'lineInfo', 'round', 'roundSeparatorWidth', 'x', 'y']);
+	      rest = _objectWithoutProperties(_ref, ['game', 'games', 'GameComponent', 'gameDimensions', 'homeOnTop', 'lineInfo', 'round', 'roundSeparatorWidth', 'theme', 'x', 'y']);
 
 	  var gameWidth = gameDimensions.width,
 	      gameHeight = gameDimensions.height;
@@ -22542,7 +22557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      key: game.id + '-' + side + '-' + y + '-path',
 	      d: pathInfo.join(' '),
 	      fill: 'transparent',
-	      stroke: 'black'
+	      stroke: theme.connectorColor
 	    });
 	  }).flatten(true).value());
 	};
@@ -22622,7 +22637,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	              activateScoreInputs: _this.activateScoreInputs,
 	              hoveredTeamId: _this.props.hoveredTeamId,
 	              onHoveredTeamIdChange: _this.props.onHoveredTeamIdChange,
-	              styleConfig: _this.props.styleConfig
+	              styleConfig: _this.props.styleConfig,
+	              theme: _this.props.theme
 	            }, setScore, state)
 	          );
 	        })
@@ -42246,6 +42262,40 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.dark = undefined;
+
+	var _dark = __webpack_require__(197);
+
+	var _dark2 = _interopRequireDefault(_dark);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.dark = _dark2.default;
+
+/***/ },
+/* 197 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var dark = {
+	  connectorColor: '#FFFFFF'
+	};
+
+	exports.default = dark;
+
+/***/ },
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
