@@ -214,7 +214,10 @@ export default class Bracket extends Component {
   getGameSidesComponents = (game, games, setScore, state) => (
     !!game.sides
     ? (
-      <div className="col col-9" style={this.getLargeColumnSize(game)}>
+      <div
+        className={`col ${game.num === (this.props.numRounds - 2) ? 'col-3' : 'col-9'}`}
+        style={this.getLargeColumnSize(game)}
+      >
         {SETTINGS.SIDES.map(side => (
           <div className="row" key={`${game.name}-${side}`}>
             {

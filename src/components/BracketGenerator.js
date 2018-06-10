@@ -120,9 +120,6 @@ export default class BracketGenerator extends Component {
 
     const { finals, games, theme } = this.state;
 
-    console.log("THEME")
-    console.log(theme)
-
     return (
       <div
         style={{
@@ -141,7 +138,7 @@ export default class BracketGenerator extends Component {
                 key={game.id}
                 style={{
                   flexGrow: 1,
-                  maxWidth: `${this.props.numRounds * 200}px`,
+                  //maxWidth: `${this.props.numRounds * 200}px`,
                   textAlign: 'center',
                   minWidth: `${this.props.numRounds * 200}px`
                 }}

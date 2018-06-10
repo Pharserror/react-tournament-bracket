@@ -277,9 +277,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          theme = _state.theme;
 
 
-	      console.log("THEME");
-	      console.log(theme);
-
 	      return _react2.default.createElement(
 	        'div',
 	        {
@@ -299,7 +296,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              key: game.id,
 	              style: {
 	                flexGrow: 1,
-	                maxWidth: _this3.props.numRounds * 200 + 'px',
+	                //maxWidth: `${this.props.numRounds * 200}px`,
 	                textAlign: 'center',
 	                minWidth: _this3.props.numRounds * 200 + 'px'
 	              }
@@ -22628,7 +22625,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _this.getGameSidesComponents = function (game, games, setScore, state) {
 	      return !!game.sides ? _react2.default.createElement(
 	        'div',
-	        { className: 'col col-9', style: _this.getLargeColumnSize(game) },
+	        {
+	          className: 'col ' + (game.num === _this.props.numRounds - 2 ? 'col-3' : 'col-9'),
+	          style: _this.getLargeColumnSize(game)
+	        },
 	        _settings2.default.SIDES.map(function (side) {
 	          return _react2.default.createElement(
 	            'div',
