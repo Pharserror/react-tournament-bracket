@@ -1,0 +1,35 @@
+.bracket {
+  display: grid;
+  grid-template-columns: [left] auto [mid] auto [right];
+  grid-template-rows: [top] auto [bottom];
+
+  & > .bracket-svg {
+    grid-column-start: mid;
+    grid-column-end: right;
+    grid-row-start: top;
+    grid-row-end: bottom;
+  }
+
+  & > .sides {
+    display: grid;
+  }
+}
+
+.game-score-inputs {
+  form {
+    display: grid;
+    grid-template-columns: [left] auto [mid] auto [right];
+    grid-template-rows: [top] auto [bottom];
+
+    .inputs-wrapper {
+      display: grid;
+    }
+
+    .inputs-form-submit {
+      grid-column-start: mid;
+      grid-column-end: right;
+      grid-row-start: top;
+      grid-row-end: bottom;
+    }
+  }
+}

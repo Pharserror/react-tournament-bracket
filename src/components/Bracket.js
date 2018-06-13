@@ -21,9 +21,9 @@ const renderBracketOrGame = (game, games, numRounds, props, setScore, state) => 
       {...props}
     />
   ) : (
-    <div className="col text-right">
+    <div className="bracket-game-wrapper">
       <BracketGame game={game} games={games} {...props} />
-      <div className="row" style={state.isSettingScore ? {} : { display: 'none' }}>
+      <div className="score-inputs-form-wrapper" style={state.isSettingScore ? {} : { display: 'none' }}>
         {renderScoreInputsForm(game, games, props, 'game', setScore)}
       </div>
     </div>
@@ -103,7 +103,7 @@ const renderBracketSVG = ({
 };
 
 const renderScoreInputsForm = (game, games, props, scoreFor, setScore) => (
-  <div className="col">
+  <div className="game-score-inputs">
     <form
       onSubmit={
         partial(
@@ -115,29 +115,17 @@ const renderScoreInputsForm = (game, games, props, scoreFor, setScore) => (
       }
       style={{ marginLeft: 'auto', width: '264px' }}
     >
-      <div className="row">
-        <div
-          className={`col col-${scoreFor === 'game' ? '8' : '7'} offset-1 ${props.styleConfig.textAlignment}`}
-          style={scoreFor === 'game' ? { paddingRight: '20px' } : {}}
-        >
-          <div className="row">
-            <div className={`col ${props.styleConfig.textAlignment}`}>
-              <input name="score[home]" style={{ width: '121px' }} type="text" />
-            </div>
-          </div>
-          <div className="row">
-            <div className={`col ${props.styleConfig.textAlignment}`}>
-              <input name="score[visitor]" style={{ width: '121px' }} type="text" />
-            </div>
-          </div>
+      <div className={`inputs-wrapper`}>
+        <div className={`home-input`}>
+          <input name="score[home]" style={{ width: '121px' }} type="text" />
         </div>
-        {/* TODO: Can potentially use npm classnames to clean this up */}
-        <div
-          className={`col col-3 ${props.styleConfig.textAlignment}`}
-          style={{ paddingLeft: `${scoreFor === 'game' ? '0px' : '13px'}`}}
-        >
-          <input style={{ height: '60px' }} type="submit" value="Lock" />
+        <div className={`visitor-input`}>
+          <input name="score[visitor]" style={{ width: '121px' }} type="text" />
         </div>
+      </div>
+      {/* TODO: Can potentially use npm classnames to clean this up */}
+      <div className="inputs-form-submit">
+        <input style={{ height: '60px' }} type="submit" value="Lock" />
       </div>
     </form>
   </div>
@@ -152,7 +140,6 @@ export default class Bracket extends Component {
 
     this.state = { isSettingScore: false };
     this.activateScoreInputs = this.activateScoreInputs.bind(this);
-    this.getLargeColumnSize = this.getLargeColumnSize.bind(this);
   }
 
   static propTypes = {
@@ -214,12 +201,9 @@ export default class Bracket extends Component {
   getGameSidesComponents = (game, games, setScore, state) => (
     !!game.sides
     ? (
-      <div
-        className={`col ${game.num === (this.props.numRounds - 2) ? 'col-3' : 'col-9'}`}
-        style={this.getLargeColumnSize(game)}
-      >
+      <div className={`sides round-${game.num}`}>
         {SETTINGS.SIDES.map(side => (
-          <div className="row" key={`${game.name}-${side}`}>
+          <div className="games-wrapper" key={`${game.name}-${side}`}>
             {
               renderBracketOrGame(
                 game.sides[side].seed,
@@ -241,11 +225,6 @@ export default class Bracket extends Component {
       </div>
     ) : null
   )
-
-  getLargeColumnSize(game) {
-    // TODO: put 250 in a constant in SETTINGS
-    return { minWidth: `${(((this.props.numRounds - 1) - game.num) * 250)}px` };
-  }
 
   render() {
     const {
@@ -299,37 +278,31 @@ export default class Bracket extends Component {
     };
 
     return (
-      <div className="col">
-        <div className="row">
-          {this.getGameSidesComponents(game, games, setScore, this.state)}
-          <div className="col col-3 text-right">
-            <div className="row">
-              <div className="col" style={{ minWidth: '250px' }}>
-                <svg {...svgDimensions} className={`round-${game.num}`}>
-                  <g>
-                    {
-                      renderBracketSVG({
-                        GameComponent,
-                        gameDimensions,
-                        roundSeparatorWidth,
-                        game,
-                        games,
-                        activateScoreInputs: this.activateScoreInputs,
-                        round: numRounds,
-                        // svgPadding away from the right
-                        x: 20, //svgDimensions.width - svgPadding - gameDimensions.width,
-                        // vertically centered first game
-                        y: 0,
-                        ...rest
-                      })
-                    }
-                  </g>
-                </svg>
-              </div>
-            </div>
-            <div className="row" style={this.state.isSettingScore ? {} : { display: 'none' }}>
-              {renderScoreInputsForm(game, games, { styleConfig }, 'bracket', setScore)}
-            </div>
+      <div className="bracket">
+        {this.getGameSidesComponents(game, games, setScore, this.state)}
+        <div className="bracket-svg">
+          <svg {...svgDimensions} className={`round-${game.num}`}>
+            <g>
+              {
+                renderBracketSVG({
+                  GameComponent,
+                  gameDimensions,
+                  roundSeparatorWidth,
+                  game,
+                  games,
+                  activateScoreInputs: this.activateScoreInputs,
+                  round: numRounds,
+                  // svgPadding away from the right
+                  x: 20, //svgDimensions.width - svgPadding - gameDimensions.width,
+                  // vertically centered first game
+                  y: 0,
+                  ...rest
+                })
+              }
+            </g>
+          </svg>
+          <div style={this.state.isSettingScore ? {} : { display: 'none' }}>
+            {renderScoreInputsForm(game, games, { styleConfig }, 'bracket', setScore)}
           </div>
         </div>
       </div>

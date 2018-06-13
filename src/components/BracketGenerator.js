@@ -1,3 +1,4 @@
+require('../scss/main.scss');
 import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
 import { chain, filter, map, some } from 'lodash';
@@ -122,9 +123,8 @@ export default class BracketGenerator extends Component {
 
     return (
       <div
+        className="wrapper"
         style={{
-          display:        'flex',
-          flexWrap:       'wrap',
           alignItems:     'center',
           justifyContent: this.props.styleConfig.contentAlignment,
           ...style
@@ -135,30 +135,20 @@ export default class BracketGenerator extends Component {
             finals,
             ({ game, height }) => (
               <div
+                className="bracket-wrapper"
                 key={game.id}
-                style={{
-                  flexGrow: 1,
-                  //maxWidth: `${this.props.numRounds * 200}px`,
-                  textAlign: 'center',
-                  minWidth: `${this.props.numRounds * 200}px`
-                }}
+                style={{textAlign: 'center'}}
               >
                 <TitleComponent game={game} height={height} />
-                <div style={{ maxWidth: '100%' }}>
-                  <div className="container-fluid">
-                    <div className="row">
-                      <Bracket
-                        game={game}
-                        games={games}
-                        hoveredTeamId={this.state.hoveredTeamId}
-                        onHoveredTeamIdChange={this.onHoveredTeamIdChange}
-                        setScore={this.setScore}
-                        theme={theme}
-                        {...rest}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <Bracket
+                  game={game}
+                  games={games}
+                  hoveredTeamId={this.state.hoveredTeamId}
+                  onHoveredTeamIdChange={this.onHoveredTeamIdChange}
+                  setScore={this.setScore}
+                  theme={theme}
+                  {...rest}
+                />
               </div>
             )
           )

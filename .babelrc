@@ -1,26 +1,8 @@
 {
+  "plugins": ["transform-class-properties"],
   "presets": [
-    "stage-1",
-    "es2015",
+    "stage-0",
+    "env",
     "react"
-  ],
-  "plugins": [
-    "transform-strict-mode",
-    "transform-class-properties"
-  ],
-  "env": {
-    "node": {
-      "plugins": [
-        [
-          "babel-plugin-transform-require-ignore",
-          {
-            "extensions": [
-              ".css",
-              ".scss"
-            ]
-          }
-        ]
-      ]
-    }
-  }
+  ]
 }

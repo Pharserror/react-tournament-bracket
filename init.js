@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import BracketGenerator from './src/components/BracketGenerator';
@@ -23,7 +22,7 @@ const startingGames = [
   ['home-16', 'visitor-16']
 ];
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   //generateRandomGames({ roundLimit: 0 }).then(games => {
   generateGames({ startingGames, roundLimit: 5 }).then(games => {
     console.log(games);

@@ -33,16 +33,21 @@ module.exports = {
   },*/
 
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
+    rules: [{
       exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        presets: ['react', 'es2015', 'stage-0'] // we need to use this preset so that Babel doesn't choke on JSX syntax
-      }
+      test: /\.jsx?$/,
+      use: 'babel-loader'
+    }, {
+      exclude: /node_modules/,
+      test: /\.scss$/,
+      use: [
+        'style-loader',
+        'css-loader',
+        'sass-loader'
+      ]
     }]
   },
   resolve: {
-    extensions: [ '', '.js', '.jsx' ]
+    extensions: ['.js', '.jsx']
   }
 };
