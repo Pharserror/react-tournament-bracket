@@ -113,7 +113,7 @@ const renderScoreInputsForm = (game, games, props, scoreFor, setScore) => (
           game.round
         )
       }
-      style={{ marginLeft: 'auto', width: '264px' }}
+      style={{ marginLeft: 'auto' }}
     >
       <div className={`inputs-wrapper`}>
         <div className={`home-input`}>

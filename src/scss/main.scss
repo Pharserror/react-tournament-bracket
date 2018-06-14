@@ -18,8 +18,9 @@
 .game-score-inputs {
   form {
     display: grid;
-    grid-template-columns: [left] auto [mid] auto [right];
+    grid-template-columns: [left] 155px [mid] 44px [right];
     grid-template-rows: [top] auto [bottom];
+    width: 250px;
 
     .inputs-wrapper {
       display: grid;
