@@ -102,6 +102,7 @@ export default class BracketGenerator extends Component {
     event.persist();
     const games = (new Array(setScore(event, game, this.state.games[0], round)));
 
+    this.props.onSetScore(games);
     this.setState({
       games,
       finals: makeFinals({ games })
@@ -130,29 +131,27 @@ export default class BracketGenerator extends Component {
           ...style
         }}
       >
-        {
-          map(
-            finals,
-            ({ game, height }) => (
-              <div
-                className="bracket-wrapper"
-                key={game.id}
-                style={{textAlign: 'center'}}
-              >
-                <TitleComponent game={game} height={height} />
-                <Bracket
-                  game={game}
-                  games={games}
-                  hoveredTeamId={this.state.hoveredTeamId}
-                  onHoveredTeamIdChange={this.onHoveredTeamIdChange}
-                  setScore={this.setScore}
-                  theme={theme}
-                  {...rest}
-                />
-              </div>
-            )
+        {map(
+          finals,
+          ({ game, height }) => (
+            <div
+              className="bracket-wrapper"
+              key={game.id}
+              style={{textAlign: 'center'}}
+            >
+              <TitleComponent game={game} height={height} />
+              <Bracket
+                game={game}
+                games={games}
+                hoveredTeamId={this.state.hoveredTeamId}
+                onHoveredTeamIdChange={this.onHoveredTeamIdChange}
+                setScore={this.setScore}
+                theme={theme}
+                {...rest}
+              />
+            </div>
           )
-        }
+        )}
       </div>
     );
   }
