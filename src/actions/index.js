@@ -23,11 +23,12 @@ export function setScore(event, game, games, round) {
 
   const newGames = cloneDeep(games);
   const data = gatherFormData(event);
+  const { score: { home: homeScore, visitor: visitorScore } } = data;
   const [nextGame, teams] = findTeams(undefined, game, newGames, round);
-  teams.home.score.score = Number(data.score.home);
-  teams.visitor.score.score = Number(data.score.visitor);
+  teams.home.score.score = Number(homeScore);
+  teams.visitor.score.score = Number(visitorScore);
   nextGame.team.name = nextGame.team.id = (
-    teams[(data.score.home > data.score.visitor ? 'home' : 'visitor')].team.name
+    teams[(homeScore > visitorScore ? 'home' : 'visitor')].team.name
   );
 
   return newGames;
