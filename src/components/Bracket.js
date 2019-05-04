@@ -105,14 +105,12 @@ const renderBracketSVG = ({
 const renderScoreInputsForm = (game, games, props, scoreFor, setScore) => (
   <div className="game-score-inputs">
     <form
-      onSubmit={
-        partial(
-          setScore,
-          partial.placeholder,
-          game.game,
-          game.round
-        )
-      }
+      onSubmit={partial(
+        setScore,
+        partial.placeholder,
+        game.game,
+        game.round
+      )}
       style={{ marginLeft: 'auto' }}
     >
       <div className={`inputs-wrapper`}>

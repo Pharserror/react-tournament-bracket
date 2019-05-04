@@ -76,6 +76,7 @@ export default class BracketGenerator extends Component {
 
   // By default we will render a BracketTitle to display the title for the whole bracket
   static defaultProps = {
+    setScoreCallback: () => (new Promise((resolve, reject) => resolve(false))),
     styleConfig:    {
       contentAlignment: 'left',
       textAlignment:    'text-left',
@@ -100,12 +101,15 @@ export default class BracketGenerator extends Component {
   setScore(event, game, round) {
     event.preventDefault();
     event.persist();
+
     const games = (new Array(setScore(event, game, this.state.games[0], round)));
 
-    this.setState({
-      games,
-      finals: makeFinals({ games })
-    });
+    this.props.setScoreCallback(games).then(() => {
+      this.setState({
+          games,
+          finals: makeFinals({ games })
+      });
+    }).catch(() => { /* TODO: Add error handling */ });
   }
 
   /* Based on this render it should be safe to assume that the data is structured
