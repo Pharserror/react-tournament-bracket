@@ -1,7 +1,11 @@
 require('../scss/main.scss');
 import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
-import { chain, filter, map, some } from 'lodash';
+import chain from 'lodash/chain';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
+import partial from 'lodash/partial';
+import some from 'lodash/some';
 import Bracket from './Bracket';
 import GameShape from './GameShape';
 import { setScore } from '../actions';
@@ -104,10 +108,10 @@ export default class BracketGenerator extends Component {
 
     const games = (new Array(setScore(event, game, this.state.games[0], round)));
 
-    this.props.setScoreCallback({ event, games, round }).then(() => {
+    this.props.setScoreCallback({ event, game, games, round }).then((games) => {
       this.setState({
-          games,
-          finals: makeFinals({ games })
+        games,
+        finals: makeFinals({ games })
       });
     }).catch(() => { /* TODO: Add error handling */ });
   }
