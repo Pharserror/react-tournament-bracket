@@ -1,11 +1,7 @@
 require('../scss/main.scss');
 import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
-import chain from 'lodash/chain';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
-import partial from 'lodash/partial';
-import some from 'lodash/some';
+import { chain, filter, map, some } from 'lodash';
 import Bracket from './Bracket';
 import GameShape from './GameShape';
 import { setScore } from '../actions';
