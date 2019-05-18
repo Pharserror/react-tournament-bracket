@@ -108,8 +108,7 @@ const renderScoreInputsForm = (game, games, props, scoreFor, setScore) => (
       onSubmit={partial(
         setScore,
         partial.placeholder,
-        game.game,
-        game.round
+        game
       )}
       style={{ marginLeft: 'auto' }}
     >
