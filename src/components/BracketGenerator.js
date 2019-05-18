@@ -103,7 +103,7 @@ export default class BracketGenerator extends Component {
     event.persist();
 
     const games = (
-      new Array(setScore(event, game, this.state.games[0], game.round))
+      new Array(setScore(event, game.game, this.state.games[0], game.round))
     );
 
     this.props.setScoreCallback({
