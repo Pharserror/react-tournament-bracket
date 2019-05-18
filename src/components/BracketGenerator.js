@@ -98,13 +98,17 @@ export default class BracketGenerator extends Component {
     this.setState({ hoveredTeamId: id });
   }
 
-  setScore(event, game, round) {
+  setScore(event, game) {
     event.preventDefault();
     event.persist();
 
-    const games = (new Array(setScore(event, game, this.state.games[0], round)));
+    const games = (
+      new Array(setScore(event, game, this.state.games[0], game.round))
+    );
 
-    this.props.setScoreCallback({ event, game, games, round }).then((games) => {
+    this.props.setScoreCallback({
+      event, game, games, round: game.round
+    }).then((games) => {
       this.setState({
         games,
         finals: makeFinals({ games })
